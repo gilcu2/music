@@ -2,7 +2,7 @@ import AcceptanceTest._
 import IntegrationTest._
 import UnitTest._
 
-name := "spark-streaming"
+name := "traffic-cwt"
 organization := "com.gilcu2"
 
 UnitTestSettings ++ IntegrationTestSettings ++ AcceptanceTestSettings
@@ -11,19 +11,15 @@ configs(IntegrationTestConfig, AcceptanceTestConfig, TestAll)
 
 version := "0.1"
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.9"
 
-val sparkV = "2.4.3"
+val sparkV = "2.4.4"
 
 libraryDependencies ++= Seq(
 
   "org.apache.spark" %% "spark-core" % sparkV % "provided",
   "org.apache.spark" %% "spark-sql" % sparkV % "provided",
-  "org.apache.spark" %% "spark-streaming" % sparkV % "provided",
-  "org.apache.spark" %% "spark-sql-kafka-0-10" % sparkV % "provided",
-  "org.apache.kafka" % "kafka-clients" % "0.10.2.2" % "provided",
-  //  "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkV,
-//  "org.apache.spark" %% "spark-cassandra-connector" % sparkV % "provided",
+
 
   "com.typesafe" % "config" % "1.3.4",
 
