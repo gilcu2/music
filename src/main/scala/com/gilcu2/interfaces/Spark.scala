@@ -13,19 +13,25 @@ object Spark {
 
   def loadCSVFromFile(path: String, delimiter: String = ",", header: Boolean = true)(implicit sparkSession: SparkSession): DataFrame = {
     val lines = readTextFile(path + ".csv")
-    loadCSVFromLines(lines)
+    loadCSVFromLineDS(lines)
   }
 
   def readTextFile(path: String)(implicit spark: SparkSession): Dataset[String] =
     spark.read.textFile(path)
 
-  def loadCSVFromLines(lines: Dataset[String], delimiter: String = ",", header: Boolean = true)(implicit sparkSession: SparkSession): DataFrame = {
+  def loadCSVFromLineDS(lines: Dataset[String], delimiter: String = ",", header: Boolean = true)(implicit sparkSession: SparkSession): DataFrame = {
 
     sparkSession.read
       .option("header", header)
       .option("delimiter", delimiter)
       .option("inferSchema", "true")
       .csv(lines)
+  }
+
+  def loadCSVFromLineSeq(lines: Seq[String], delimiter: String = ",", header: Boolean = true)(implicit spark: SparkSession): DataFrame = {
+    import spark.implicits._
+
+    loadCSVFromLineDS(spark.createDataset(lines), delimiter, header)
   }
 
   def getTotalCores(implicit spark: SparkSession): Int = {
