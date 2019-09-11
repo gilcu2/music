@@ -6,7 +6,7 @@ import com.typesafe.config.Config
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.rogach.scallop.ScallopConf
 
-object ExplorationMain extends MainTrait {
+object TrafficMain extends MainTrait {
 
   def explore(df: DataFrame): Unit = {
 
@@ -27,7 +27,9 @@ object ExplorationMain extends MainTrait {
 
     val data = Data(accidents, vehicles, casualties)
 
-    if (argumentsExploration.doSummary)
+    val join = prPreprocessing
+
+    if (argumentsExploration.doDommain)
       Exploration.showSummaries(data)
 
 
@@ -49,19 +51,19 @@ object ExplorationMain extends MainTrait {
   }
 
   class CommandLineParameterConf(arguments: Seq[String]) extends ScallopConf(arguments) {
-    val resume = opt[Boolean]()
+    val domain = opt[Boolean]()
   }
 
-  case class ArgumentsExploration(doSummary: Boolean) extends LineArgumentValuesTrait
+  case class ArgumentsExploration(doDommain: Boolean) extends LineArgumentValuesTrait
 
   override def getLineArgumentsValues(args: Array[String], configValues: ConfigValuesTrait): ArgumentsExploration = {
 
     val parsedArgs = new CommandLineParameterConf(args.filter(_.nonEmpty))
     parsedArgs.verify
 
-    val resume = parsedArgs.resume()
+    val doDomain = parsedArgs.domain()
 
-    ArgumentsExploration(resume)
+    ArgumentsExploration(doDomain)
   }
 
 }
