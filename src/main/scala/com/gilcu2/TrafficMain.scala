@@ -2,6 +2,7 @@ package com.gilcu2
 
 import com.gilcu2.exploration.{Data, Exploration}
 import com.gilcu2.interfaces.{ConfigValuesTrait, LineArgumentValuesTrait, MainTrait, Spark}
+import com.gilcu2.preprocessing.Preprocessing
 import com.typesafe.config.Config
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.rogach.scallop.ScallopConf
@@ -27,7 +28,7 @@ object TrafficMain extends MainTrait {
 
     val data = Data(accidents, vehicles, casualties)
 
-    val join = prPreprocessing
+    //    val join = Preprocessing.joinAccidentWithVehiclesCasualties(data)
 
     if (argumentsExploration.doDommain)
       Exploration.showSummaries(data)
