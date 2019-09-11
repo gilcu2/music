@@ -12,4 +12,5 @@ object Statistic {
     df.select(column)
       .withColumn(labelFrequency, count(column).over(Window.partitionBy(column)))
       .distinct()
+
 }

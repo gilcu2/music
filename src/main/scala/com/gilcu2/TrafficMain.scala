@@ -28,15 +28,13 @@ object TrafficMain extends MainTrait {
 
     val data = Data(accidents, vehicles, casualties)
 
-    //    val join = Preprocessing.joinAccidentWithVehiclesCasualties(data)
+    val accidentVehicles = Preprocessing.joinAccidentWithVehicles(data.accidents, data.vehicles)
 
     if (argumentsExploration.doDommain)
       Exploration.showSummaries(data)
 
 
   }
-
-  case class ConfigExploration(accidentPath: String, vehiclePath: String, casualtyPath: String) extends ConfigValuesTrait
 
   override def getConfigValues(conf: Config): ConfigExploration = {
     val dataPath = conf.getString("DataDir")
@@ -51,12 +49,6 @@ object TrafficMain extends MainTrait {
     )
   }
 
-  class CommandLineParameterConf(arguments: Seq[String]) extends ScallopConf(arguments) {
-    val domain = opt[Boolean]()
-  }
-
-  case class ArgumentsExploration(doDommain: Boolean) extends LineArgumentValuesTrait
-
   override def getLineArgumentsValues(args: Array[String], configValues: ConfigValuesTrait): ArgumentsExploration = {
 
     val parsedArgs = new CommandLineParameterConf(args.filter(_.nonEmpty))
@@ -66,5 +58,15 @@ object TrafficMain extends MainTrait {
 
     ArgumentsExploration(doDomain)
   }
+
+  case class ConfigExploration(accidentPath: String, vehiclePath: String, casualtyPath: String) extends ConfigValuesTrait
+
+  class CommandLineParameterConf(arguments: Seq[String]) extends ScallopConf(arguments) {
+    val domain = opt[Boolean](short = 'o')
+    val data = opt[String](default = Some("all"))
+    val field = opt[String](default = Some(acc))
+  }
+
+  case class ArgumentsExploration(doDommain: Boolean) extends LineArgumentValuesTrait
 
 }

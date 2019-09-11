@@ -9,6 +9,7 @@ object Preprocessing {
   val vehicleIdField = "VehicleReferenceNumber"
   val yearField = "Year"
   val casualtyNumberField = "CasualtyNumber"
+  val accidentSeveriteField = "Accident Severity"
 
   def joinVehiclesWithCasualties(vehicles: DataFrame, casualties: DataFrame): DataFrame = {
 
@@ -20,6 +21,12 @@ object Preprocessing {
 
     val joinFields = Array(accidentIdField, yearField)
     accidents.join(vehiclesCasualties, joinFields, "inner")
+  }
+
+  def joinAccidentWithVehicles(accidents: DataFrame, vehicles: DataFrame): DataFrame = {
+
+    val joinFields = Array(accidentIdField, yearField)
+    accidents.join(vehicles, joinFields, "inner")
   }
 
 }
