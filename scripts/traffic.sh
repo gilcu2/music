@@ -3,9 +3,9 @@
 MASTER="local[8]"
 CONFIGPATH="."
 PROGRAM="../target/scala-2.11/TrafficAccidents.jar"
-MAIN=com.gilcu2.ExplorationMain
-OUT=exploration.out
-ERR=exploration.err
+MAIN=com.gilcu2.TrafficMain
+OUT=traffic.out
+ERR=traffic.err
 if [[ $DEBUG ]];then
     export SPARK_SUBMIT_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005
 fi

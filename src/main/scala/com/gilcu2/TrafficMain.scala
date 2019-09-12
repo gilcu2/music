@@ -1,6 +1,6 @@
 package com.gilcu2
 
-import com.gilcu2.exploration.{Data, Exploration}
+import com.gilcu2.exploration.{Data, Exploration, Statistic}
 import com.gilcu2.interfaces.{ConfigValuesTrait, LineArgumentValuesTrait, MainTrait, Spark}
 import com.gilcu2.preprocessing.Preprocessing
 import com.typesafe.config.Config
@@ -15,6 +15,7 @@ object TrafficMain extends MainTrait {
     summary.show()
 
   }
+
 
   override def process(configValues: ConfigValuesTrait, lineArguments: LineArgumentValuesTrait)(
     implicit spark: SparkSession): Unit = {
@@ -32,6 +33,12 @@ object TrafficMain extends MainTrait {
 
     if (argumentsExploration.doDommain)
       Exploration.showSummaries(data)
+
+    if (argumentsExploration.doAgeSeverity) {
+      val r = Statistic.computeSeverityDriverAge(accidentVehicles, severity = 1)
+      r.show()
+    }
+
 
 
   }
@@ -55,18 +62,18 @@ object TrafficMain extends MainTrait {
     parsedArgs.verify
 
     val doDomain = parsedArgs.domain()
+    val doAgeSeverity = parsedArgs.ageSeverity()
 
-    ArgumentsExploration(doDomain)
+    ArgumentsExploration(doDomain, doAgeSeverity)
   }
 
   case class ConfigExploration(accidentPath: String, vehiclePath: String, casualtyPath: String) extends ConfigValuesTrait
 
   class CommandLineParameterConf(arguments: Seq[String]) extends ScallopConf(arguments) {
     val domain = opt[Boolean](short = 'o')
-    val data = opt[String](default = Some("all"))
-    val field = opt[String](default = Some(acc))
+    val ageSeverity = opt[Boolean](short = 'a')
   }
 
-  case class ArgumentsExploration(doDommain: Boolean) extends LineArgumentValuesTrait
+  case class ArgumentsExploration(doDommain: Boolean, doAgeSeverity: Boolean) extends LineArgumentValuesTrait
 
 }

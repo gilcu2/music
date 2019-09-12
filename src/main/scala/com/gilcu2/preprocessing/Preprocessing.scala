@@ -9,7 +9,8 @@ object Preprocessing {
   val vehicleIdField = "VehicleReferenceNumber"
   val yearField = "Year"
   val casualtyNumberField = "CasualtyNumber"
-  val accidentSeveriteField = "Accident Severity"
+  val accidentSeveriteField = "Severity"
+  val vehicleDriverAgeField = "AgeBandOfDriver"
 
   def joinVehiclesWithCasualties(vehicles: DataFrame, casualties: DataFrame): DataFrame = {
 

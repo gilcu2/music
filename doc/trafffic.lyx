@@ -80,10 +80,388 @@
 Traffic accident analysis
 \end_layout
 
+\begin_layout Author
+Reynaldo Gil García
+\end_layout
+
+\begin_layout Address
+gilcu2@gmail.com
+\end_layout
+
 \begin_layout Abstract
-The traffic accidents data from Manchester Region between 2005 and 2018
- is analyzed.
+The Full Stats 19 data with the accidents happened in Manchester area between
+ 2005 and 2018 was studied.
+\end_layout
+
+\begin_layout Section
+Profiling
+\end_layout
+
+\begin_layout Standard
+The data consist of 3 csv comma separated files with headers: 
+\end_layout
+
+\begin_layout Itemize
+Accidents: It is the primary source.
+ For each accident has an identifier Accident Index and 26 more features
+ with some redundancy, for example from Output Data can be obtained Year
+ and Day (means day of the week).
+ Some features allow to appreciate the seriousness of the accident like
+ Severity, NumberVehicles, NumberCasualties but for example is not explicit
+ the number of fatal casualties.
+ Other features are related to factors that can contribute to the accident
+ like Day, OutputTime, RoadClass, LightingCondition, WeatherCondition, RoadSurfa
+ce, SpecialConditions.
+ Other fields are about the position where the accident happened like Easting,
+ Northing the coordinates of the point and several other official data.
+\end_layout
+
+\begin_layout Itemize
+Vehicles: Describe the vehicles involved in the accident.
+ The field Accident Index allow to join with the accident while Year have
+ the same value that the accident.
+ VehicleReferenceNumber is an index of the vehicles involved in the accident,
+ is not an identifier of the vehicle so no way to discover if the same vehicle
+ is involved in several accidents.
+ Another fields that can considered factors are VehicleType, SexOfDriver
+ and AgeBandOfDriver.
+ The rest of fields describe how this vehicle was involved in the accident.
+ Information about year of the making year, brand and model can be so interestin
+g from a research point of view but is not available.
+\end_layout
+
+\begin_layout Itemize
+Casualties: Describe the people involved in the accident.
+ It have the fields Accident Index and VehicleReferenceNumber that allows
+ to link with the accident and the vehicle.
+ Also the Year is the same than in the two other data sources.
+ CasualtyNumber allow to identify casualty in this accident, no way to know
+ if the same people is involved in several accidents neither.
+ The other fields describe the casualties age, sex and how it was involved
+ in the accident.
+\end_layout
+
+\begin_layout Standard
+In general the data lack of a good explanation of the meaning and possible
+ values of the fields but can be discovered from the Accident Statistic
+ Model.
+ For example the Severity of the accident that have values 1,2,3 must be
+ FATAL, SERIOUS, SLIGHT respectively.
+\end_layout
+
+\begin_layout Standard
+The data guide document available only enumerate the fields and explain
+ the possible values of the AgeBand and CasualtyType fields.
  
+\end_layout
+
+\begin_layout Standard
+We compute the maximum and minimum values of each field to know the domain.
+ They are shown in Appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Domain"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Integration in Spark
+\end_layout
+
+\begin_layout Standard
+We read each csv file to a DataFrame.
+ The data can be integrated joining using the Accident Index and VehicleReferenc
+eNumber.
+ We first join Vehicles and Causalities dataframes because all the casualties
+ are always related to one vehicle so we don't lose any casualties.
+ We use a left join, so the vehicles that are not involves with casualties
+ get the casualties field to null in the join.
+ Them , we join the previous result with Accident using the Accident Index
+ field.
+ In all join we include the Year as join field in order too remove the repetitio
+ns of this column.
+ Our final integrated data have for one row for each accident, car and casualty
+ involved.
+ So, it is a good way to queries that involve data related to the tree original
+ sources but have a lot or repetitions.
+ 
+\end_layout
+
+\begin_layout Section
+Discoveries
+\end_layout
+
+\begin_layout Section
+Accidents hot spots
+\end_layout
+
+\begin_layout Section
+Conclusions
+\end_layout
+
+\begin_layout Subsection*
+Domain
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Domain"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We compute the maximum and minimum values of each field to know the domain.
+\end_layout
+
+\begin_layout Standard
+Accidents:
+\end_layout
+
+\begin_layout Itemize
+Accident Index 100000062008 114999522008 
+\end_layout
+
+\begin_layout Itemize
+Year 2005 2018 
+\end_layout
+
+\begin_layout Itemize
+Severity 1 3 
+\end_layout
+
+\begin_layout Itemize
+NumberVehicles 1 19 
+\end_layout
+
+\begin_layout Itemize
+NumberCasualties 1 87 
+\end_layout
+
+\begin_layout Itemize
+OutputDate 01/01/2005 31/12/2018 
+\end_layout
+
+\begin_layout Itemize
+Day 1 7 
+\end_layout
+
+\begin_layout Itemize
+OutputTime 00:00 23:59 
+\end_layout
+
+\begin_layout Itemize
+Easting 352359 404673 
+\end_layout
+
+\begin_layout Itemize
+Northing 381831 419597 
+\end_layout
+
+\begin_layout Itemize
+LocalAuthority 1 114 
+\end_layout
+
+\begin_layout Itemize
+Road1Class 1 7 
+\end_layout
+
+\begin_layout Itemize
+Road1Number 0 6536 
+\end_layout
+
+\begin_layout Itemize
+CarriagewayType 1 9 
+\end_layout
+
+\begin_layout Itemize
+SpeedLimit 20 70 
+\end_layout
+
+\begin_layout Itemize
+JunctionDetail 0 9 
+\end_layout
+
+\begin_layout Itemize
+JunctionControl 0 4 
+\end_layout
+
+\begin_layout Itemize
+Road2Class 0 7 
+\end_layout
+
+\begin_layout Itemize
+Road2Number 0 6536 
+\end_layout
+
+\begin_layout Itemize
+PedCrossingHumanControl 0 2 
+\end_layout
+
+\begin_layout Itemize
+PedCrossingPhysicalFacilities 0 8 
+\end_layout
+
+\begin_layout Itemize
+LightingCondition 1 7 
+\end_layout
+
+\begin_layout Itemize
+WeatherCondition 1 9 
+\end_layout
+
+\begin_layout Itemize
+RoadSurface 1 9 
+\end_layout
+
+\begin_layout Itemize
+SpecialConditions 0 7 
+\end_layout
+
+\begin_layout Itemize
+CarriagewayHazard 0 7 
+\end_layout
+
+\begin_layout Itemize
+PlaceReported 1 2 
+\end_layout
+
+\begin_layout Standard
+Vehicles:
+\end_layout
+
+\begin_layout Itemize
+Accident Index 100000062008 114999522008 
+\end_layout
+
+\begin_layout Itemize
+Year 2005 2018 
+\end_layout
+
+\begin_layout Itemize
+VehicleReferenceNumber 1 19 
+\end_layout
+
+\begin_layout Itemize
+VehicleType 1 96 
+\end_layout
+
+\begin_layout Itemize
+ArtTowing 0 5 
+\end_layout
+
+\begin_layout Itemize
+Manoeuvre 1 18 
+\end_layout
+
+\begin_layout Itemize
+VehicleLocationOffRoad 0 9 
+\end_layout
+
+\begin_layout Itemize
+JunctionLocation 0 99 
+\end_layout
+
+\begin_layout Itemize
+Skidding 0 5 
+\end_layout
+
+\begin_layout Itemize
+HitObjectOnCWay 0 12 
+\end_layout
+
+\begin_layout Itemize
+VehicleLeaveCWay 0 8 
+\end_layout
+
+\begin_layout Itemize
+HitObjectOffCWay 0 10 
+\end_layout
+
+\begin_layout Itemize
+FirstPointImpact 0 4 
+\end_layout
+
+\begin_layout Itemize
+JourneyPurpose 1 5 
+\end_layout
+
+\begin_layout Itemize
+ForeignReg 0 9 
+\end_layout
+
+\begin_layout Itemize
+SexOfDriver 1 3 
+\end_layout
+
+\begin_layout Itemize
+AgeBandOfDriver 0 11 
+\end_layout
+
+\begin_layout Standard
+Casualties
+\end_layout
+
+\begin_layout Itemize
+Accident Index 100000062008 114999522008 
+\end_layout
+
+\begin_layout Itemize
+Year 2005 2018 
+\end_layout
+
+\begin_layout Itemize
+VehicleReferenceNumber 1 18 
+\end_layout
+
+\begin_layout Itemize
+CasualtyNumber 1 87 
+\end_layout
+
+\begin_layout Itemize
+CasualtyClass 1 3 
+\end_layout
+
+\begin_layout Itemize
+Sex 1 2 
+\end_layout
+
+\begin_layout Itemize
+AgeBandOfCasualty 1 255 
+\end_layout
+
+\begin_layout Itemize
+CasualtySeverity 1 3 
+\end_layout
+
+\begin_layout Itemize
+PedLocation 0 10 
+\end_layout
+
+\begin_layout Itemize
+PedMovement 0 9 
+\end_layout
+
+\begin_layout Itemize
+CarPassenger 0 2 
+\end_layout
+
+\begin_layout Itemize
+BusPassenger 0 4 
+\end_layout
+
+\begin_layout Itemize
+PedInjWork 0 2 
+\end_layout
+
+\begin_layout Itemize
+CasTypeCode 0 96 
 \end_layout
 
 \end_body
