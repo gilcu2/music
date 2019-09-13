@@ -5,6 +5,7 @@ import com.gilcu2.preprocessing.Preprocessing
 import com.gilcu2.preprocessing.PreprocessingTestData._
 import org.scalatest.{FlatSpec, GivenWhenThen, Matchers}
 import testUtil.SparkSessionTestWrapper
+import Preprocessing._
 
 class StatisticTest extends FlatSpec with Matchers with GivenWhenThen with SparkSessionTestWrapper {
 
@@ -26,33 +27,38 @@ class StatisticTest extends FlatSpec with Matchers with GivenWhenThen with Spark
     )
 
     When("compute the frequency of the age band of driver")
-    val ageRangeOfDriver = "AgeBandOfDriver"
-    val freq = Statistic.computeFrequency(vehicles, ageRangeOfDriver)
+    val freq = Statistic.computeFrequency(vehicles, driverAgeField)
 
     Then("results must be the expected")
     freq.collect().map(row => (row(0), row(1))).toSet shouldBe expected
 
   }
 
-  it should "compute the frequency of driver age band involved in serious accidents" in {
+  it should "compute the relative frequency with respect to a target value" in {
 
-    Given("the dataframes of accident join vehicles")
+    Given("the dataframe join of accident and vehicles ")
     val accidents = loadCSVFromLineSeq(accidentLines)
     val vehicles = loadCSVFromLineSeq(vehicleLines)
     val accidentVehicles = Preprocessing.joinAccidentWithVehicles(accidents, vehicles)
 
     And("the expected results")
     val expected = Set(
-      (6, 1),
+      (0, 1),
+      (4, 1),
+      (6, 2),
+      (7, 3),
+      (8, 1),
       (10, 1)
     )
 
-    When("compute the frequency of the age band of driver")
-    val freq = Statistic.computeSeverityDriverAge(accidentVehicles, severity = 2)
+    When("compute the relative frequency of the age band of driver")
+    val fatalSeverity = 1
+    val freq = Statistic.computeRelativeFrecuency(accidentVehicles, accidentSeveriteField, fatalSeverity, driverAgeField)
 
     Then("results must be the expected")
-    freq.collect().map(row => (row(0), row(1))).toSet shouldBe expected
+    freq.toSet shouldBe expected
 
   }
+
 
 }

@@ -6,6 +6,7 @@ import com.gilcu2.preprocessing.Preprocessing
 import com.typesafe.config.Config
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.rogach.scallop.ScallopConf
+import Preprocessing._
 
 object TrafficMain extends MainTrait {
 
@@ -34,9 +35,9 @@ object TrafficMain extends MainTrait {
     if (argumentsExploration.doDommain)
       Exploration.showSummaries(data)
 
-    if (argumentsExploration.doAgeSeverity) {
-      val r = Statistic.computeSeverityDriverAge(accidentVehicles, severity = 1)
-      r.show()
+    if (argumentsExploration.doFrequency) {
+      val fields = Seq(driverAgeField, lightConditionField, weatherConditionField, roadConditionField)
+      Statistic.showSeverityAgaintsFields(accidentVehicles, severity = 1, fields)
     }
 
 
@@ -62,18 +63,18 @@ object TrafficMain extends MainTrait {
     parsedArgs.verify
 
     val doDomain = parsedArgs.domain()
-    val doAgeSeverity = parsedArgs.ageSeverity()
+    val doFrequency = parsedArgs.frequency()
 
-    ArgumentsExploration(doDomain, doAgeSeverity)
+    ArgumentsExploration(doDomain, doFrequency)
   }
 
   case class ConfigExploration(accidentPath: String, vehiclePath: String, casualtyPath: String) extends ConfigValuesTrait
 
   class CommandLineParameterConf(arguments: Seq[String]) extends ScallopConf(arguments) {
     val domain = opt[Boolean](short = 'o')
-    val ageSeverity = opt[Boolean](short = 'a')
+    val frequency = opt[Boolean](short = 'f')
   }
 
-  case class ArgumentsExploration(doDommain: Boolean, doAgeSeverity: Boolean) extends LineArgumentValuesTrait
+  case class ArgumentsExploration(doDommain: Boolean, doFrequency: Boolean) extends LineArgumentValuesTrait
 
 }

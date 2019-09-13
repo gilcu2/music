@@ -16,9 +16,29 @@ object Statistic {
       .distinct()
       .sort(labelFrequency)
 
-  def computeSeverityDriverAge(accidentVehicles: DataFrame, severity: Int): DataFrame = {
+  def computeRelativeFrecuency(df: DataFrame, targetField: String, targetValue: Int, primaryField: String): Seq[(Int, Double)] = {
+
+    val totalFrequency = computeFrequency(df, primaryField).collect.map(row => (row.getInt(0), row.getInt(1)))
+
+    val targetDf = df.filter(df(targetField) === targetValue)
+    val targetFrequency = computeFrequency(df, primaryField)
+      .collect
+      .map(row => (row.getInt(0), row.getInt(1))).toMap
+
+    totalFrequency.map { case (value, frequency) =>
+      if (targetFrequency.contains(value)) (value, targetFrequency(value).toDouble / frequency) else (value, 0.0)
+    }
+
+  }
+
+  def showSeverityAgaintsFields(accidentVehicles: DataFrame, severity: Int, fields: Seq[String]): Unit = {
     val filtered = accidentVehicles.filter(accidentVehicles(accidentSeveriteField) === severity)
-    computeFrequency(filtered, vehicleDriverAgeField)
+
+    fields.foreach(field => {
+      val freq = computeFrequency(filtered, field)
+      freq.show()
+    })
+
 
   }
 

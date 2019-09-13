@@ -197,6 +197,74 @@ ns of this column.
 Discoveries
 \end_layout
 
+\begin_layout Subsection
+Age of driver again fatal accidents
+\end_layout
+
+\begin_layout LyX-Code
++---------------+---------+ 
+\end_layout
+
+\begin_layout LyX-Code
+|AgeBandOfDriver|Frequency| 
+\end_layout
+
+\begin_layout LyX-Code
++---------------+---------+ 
+\end_layout
+
+\begin_layout LyX-Code
+| 1| 1| 
+\end_layout
+
+\begin_layout LyX-Code
+| 2| 2| 
+\end_layout
+
+\begin_layout LyX-Code
+| 3| 7| 
+\end_layout
+
+\begin_layout LyX-Code
+| 10| 50| 
+\end_layout
+
+\begin_layout LyX-Code
+| 11| 52| 
+\end_layout
+
+\begin_layout LyX-Code
+| 0| 67| 
+\end_layout
+
+\begin_layout LyX-Code
+| 9| 111| 
+\end_layout
+
+\begin_layout LyX-Code
+| 4| 128| 
+\end_layout
+
+\begin_layout LyX-Code
+| 5| 175| 
+\end_layout
+
+\begin_layout LyX-Code
+| 8| 178| 
+\end_layout
+
+\begin_layout LyX-Code
+| 7| 243| 
+\end_layout
+
+\begin_layout LyX-Code
+| 6| 335| 
+\end_layout
+
+\begin_layout LyX-Code
++---------------+---------+ 
+\end_layout
+
 \begin_layout Section
 Accidents hot spots
 \end_layout
