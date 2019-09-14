@@ -57,12 +57,17 @@ object PreprocessingTestData {
 
   val accidentLines =
     """
-      |"Accident Index","Year","Severity","NumberVehicles","NumberCasualties","OutputDate","Day","OutputTime","Easting","Northing","LocalAuthority","Road1Class","Road1Number","CarriagewayType","SpeedLimit","JunctionDetail","JunctionControl","Road2Class","Road2Number","PedCrossingHumanControl","PedCrossingPhysicalFacilities","LightingCondition","WeatherCondition","RoadSurface","SpecialConditions","CarriagewayHazard","PlaceReported"
-      |"100177412005",2005,3,1,1,"01/01/2005",7,"18:05",371231,408511,100,4,579,6,30,6,2,5,6202,0,0,4,5,2,0,0,1
-      |"100177482005",2005,3,2,2,"02/01/2005",1,"14:00",373859,409416,100,4,58,6,30,0,0,0,0,0,0,1,1,1,0,7,2
-      |"100179802005",2005,3,2,3,"01/01/2005",7,"03:30",371650,410002,100,5,6206,6,30,3,4,7,0,0,0,4,1,2,0,0,1
-      |"100179852005",2005,2,2,2,"03/01/2005",2,"14:00",372297,408876,100,4,579,3,30,6,2,4,666,0,0,1,1,2,0,0,2
-      |"100179862005",2005,3,2,1,"03/01/2005",2,"18:20",370299,407568,100,4,579,6,30,3,4,7,0,0,0,4,1,1,0,0,2
+      |Accident_Index,Location_Easting_OSGR,Location_Northing_OSGR,Longitude,Latitude,Police_Force,Accident_Seveity,Number_of_Vehicles,Number_of_Casualties,Date,Day_of_Week,Time,Local_Authority_(District),Local_Authority_(Highway),1st_Road_Class,1st_Road_Number,Road_Type,Speed_limit,Junction_Detail,Junction_Control,2nd_Road_Class,2nd_Road_Number,Pedestrian_Crossing-Human_Control,Pedestrian_Crossing-Physical_Facilities,Light_Conditions,Weather_Conditions,Road_Surface_Conditions,Special_Conditions_at_Site,Carriageway_Hazards,Urban_or_Rural_Area,Did_Police_Officer_Attend_Scene_of_Accident,LSOA_of_Accident_Location
+      |197901A11AD14,,,,,1,3,2,1,18/01/1979,5,08:00,11,9999,3,4,1,30,1,4,-1,-1,-1,-1,1,8,1,-1,0,-1,-1,
+      |197901A1BAW34,198460,894000,NULL,NULL,1,3,1,1,01/01/1979,2,01:00,23,9999,6,0,9,30,3,4,-1,-1,-1,-1,4,8,3,-1,0,-1,-1,
+      |197901A1BFD77,406380,307000,NULL,NULL,1,3,2,3,01/01/1979,2,01:25,17,9999,3,112,9,30,6,4,-1,-1,-1,-1,4,8,3,-1,0,-1,-1,
+      |197901A1BGC20,281680,440000,NULL,NULL,1,3,2,2,01/01/1979,2,01:30,2,9999,3,502,-1,30,3,2,-1,-1,-1,-1,4,8,3,-1,0,-1,-1,
+      |197901A1BGF95,153960,795000,NULL,NULL,1,2,2,1,01/01/1979,2,01:30,510,9999,3,309,6,30,0,-1,-1,0,-1,-1,4,3,3,-1,0,-1,-1,
+      |197901A1CBC96,300370,146000,NULL,NULL,1,3,1,1,01/01/1979,2,02:05,9,9999,3,23,6,30,3,2,-1,-1,-1,-1,4,8,3,-1,0,-1,-1,
+      |197901A1DAK71,143370,951000,NULL,NULL,1,3,2,2,01/01/1979,2,03:00,27,9999,4,454,9,30,0,-1,-1,0,-1,-1,4,8,3,-1,0,-1,-1,
+      |197901A1DAP95,471960,845000,NULL,NULL,1,3,2,1,01/01/1979,2,03:00,19,9999,5,0,9,30,3,4,-1,-1,-1,-1,4,8,3,-1,0,-1,-1,
+      |197901A1EAC32,323880,632000,NULL,NULL,1,2,1,1,01/01/1979,2,04:00,3,9999,3,105,6,30,3,4,-1,-1,-1,-1,4,3,3,-1,0,-1,-1,
+      |197901A1FBK75,136380,245000,NULL,NULL,1,3,2,1,01/01/1979,2,05:05,27,9999,4,455,9,30,0,-1,-1,0,-1,-1,4,8,3,-1,0,-1,-1,
     """.cleanLines
 
   val vehicleLines =
