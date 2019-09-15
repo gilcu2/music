@@ -71,7 +71,7 @@ object TrafficMain extends MainTrait {
   case class ConfigExploration(accidentPath: String, vehiclePath: String, casualtyPath: String) extends ConfigValuesTrait
 
   class CommandLineParameterConf(arguments: Seq[String]) extends ScallopConf(arguments) {
-    val domain = opt[Boolean](short = 'o')
+    val domain = opt[Boolean](short = 'd')
     val frequency = opt[Boolean](short = 'f')
   }
 

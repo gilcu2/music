@@ -18,12 +18,10 @@ class StatisticTest extends FlatSpec with Matchers with GivenWhenThen with Spark
 
     And("the expected results")
     val expected = Set(
-      (0, 1),
-      (4, 1),
-      (6, 2),
-      (7, 3),
-      (8, 1),
-      (10, 1)
+      (-1, 5),
+      (5, 4),
+      (6, 3),
+      (7, 5)
     )
 
     When("compute the frequency of the age band of driver")
@@ -53,7 +51,7 @@ class StatisticTest extends FlatSpec with Matchers with GivenWhenThen with Spark
 
     When("compute the relative frequency of the age band of driver")
     val fatalSeverity = 1
-    val freq = Statistic.computeRelativeFrecuency(accidentVehicles, accidentSeveriteField, fatalSeverity, driverAgeField)
+    val freq = Statistic.computeRelativeFrequency(accidentVehicles, accidentSeveriteField, fatalSeverity, driverAgeField)
 
     Then("results must be the expected")
     freq.toSet shouldBe expected

@@ -16,14 +16,14 @@ object Statistic {
       .distinct()
       .sort(labelFrequency)
 
-  def computeRelativeFrecuency(df: DataFrame, targetField: String, targetValue: Int, primaryField: String): Seq[(Int, Double)] = {
+  def computeRelativeFrequency(df: DataFrame, targetField: String, targetValue: Int, primaryField: String): Seq[(Int, Double)] = {
 
-    val totalFrequency = computeFrequency(df, primaryField).collect.map(row => (row.getInt(0), row.getInt(1)))
+    val totalFrequency = computeFrequency(df, primaryField).collect.map(row => (row.getInt(0), row.getLong(1)))
 
     val targetDf = df.filter(df(targetField) === targetValue)
     val targetFrequency = computeFrequency(df, primaryField)
       .collect
-      .map(row => (row.getInt(0), row.getInt(1))).toMap
+      .map(row => (row.getInt(0), row.getLong(1))).toMap
 
     totalFrequency.map { case (value, frequency) =>
       if (targetFrequency.contains(value)) (value, targetFrequency(value).toDouble / frequency) else (value, 0.0)
