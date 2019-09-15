@@ -32,6 +32,28 @@ class StatisticTest extends FlatSpec with Matchers with GivenWhenThen with Spark
 
   }
 
+  it should "compute the absolute frequency with respect to a target value" in {
+
+    Given("the dataframe join of accident and vehicles ")
+    val accidents = loadCSVFromLineSeq(accidentLines)
+    val vehicles = loadCSVFromLineSeq(vehicleLines)
+    val accidentVehicles = Preprocessing.joinAccidentWithVehicles(accidents, vehicles)
+
+    And("the expected results")
+    val expected = Set(
+      (-1, 1),
+      (7, 1)
+    )
+
+    When("compute the  frequency of the age band of driver when the accident is fatal")
+    val fatalSeverity = 1
+    val freq = Statistic.computeAbsoluteFrequency(accidentVehicles, accidentSeveriteField, fatalSeverity, driverAgeField)
+
+    Then("results must be the expected")
+    freq.toSet shouldBe expected
+
+  }
+
   it should "compute the relative frequency with respect to a target value" in {
 
     Given("the dataframe join of accident and vehicles ")
@@ -41,15 +63,11 @@ class StatisticTest extends FlatSpec with Matchers with GivenWhenThen with Spark
 
     And("the expected results")
     val expected = Set(
-      (0, 1),
-      (4, 1),
-      (6, 2),
-      (7, 3),
-      (8, 1),
-      (10, 1)
+      (-1, 1.0 / 5),
+      (7, 1.0 / 5)
     )
 
-    When("compute the relative frequency of the age band of driver")
+    When("compute the  frequency of the age band of driver when the accident is fatal")
     val fatalSeverity = 1
     val freq = Statistic.computeRelativeFrequency(accidentVehicles, accidentSeveriteField, fatalSeverity, driverAgeField)
 
