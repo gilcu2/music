@@ -89,7 +89,7 @@ gilcu2@gmail.com
 \end_layout
 
 \begin_layout Abstract
-The Full Stats 19 data with the accidents happened in Manchester area between
+The ALLSTATS19 data have the accidents happened in Manchester area between
  2005 and 2018 was studied.
 \end_layout
 
@@ -102,57 +102,51 @@ The data consist of 3 csv comma separated files with headers:
 \end_layout
 
 \begin_layout Itemize
-Accidents: It is the primary source.
- For each accident has an identifier Accident Index and 26 more features
- with some redundancy, for example from Output Data can be obtained Year
- and Day (means day of the week).
+Accidents: It is the primary source with 6224198 rows.
+ For each accident has an identifier Accident Index and 31 more features
+ .
  Some features allow to appreciate the seriousness of the accident like
- Severity, NumberVehicles, NumberCasualties but for example is not explicit
- the number of fatal casualties.
+ Accident_Severity, Number_of_Vehicles, Number_of_Casualties but for example
+ is not explicit the number of fatal casualties.
  Other features are related to factors that can contribute to the accident
- like Day, OutputTime, RoadClass, LightingCondition, WeatherCondition, RoadSurfa
-ce, SpecialConditions.
- Other fields are about the position where the accident happened like Easting,
- Northing the coordinates of the point and several other official data.
+ like the Day of the week, Date, Time, Road_Type, Light_Condition, Weather_Condi
+tion, Road_Surface_Conditions.
+ Other fields are about the position where the accident happened like Location_E
+asting, Location_Northing.
+ There is also other official fields 
 \end_layout
 
 \begin_layout Itemize
-Vehicles: Describe the vehicles involved in the accident.
- The field Accident Index allow to join with the accident while Year have
- the same value that the accident.
- VehicleReferenceNumber is an index of the vehicles involved in the accident,
- is not an identifier of the vehicle so no way to discover if the same vehicle
- is involved in several accidents.
- Another fields that can considered factors are VehicleType, SexOfDriver
- and AgeBandOfDriver.
+Vehicles: 10981968 rows that describe the vehicles involved in the accident.
+ The field Accident_Index allow to join with the accident.
+ Vehicle_Reference is an index of the vehicles involved in the accident.
+ It is not an identifier of the vehicle so no way to discover if the same
+ vehicle is involved in several accidents.
+ Another fields that can considered factors are Vehicle_Type, Sex_of_Driver
+ and Age_Band_of_Driver and Age_of_Vehicle.
  The rest of fields describe how this vehicle was involved in the accident.
- Information about year of the making year, brand and model can be so interestin
-g from a research point of view but is not available.
+ Information about brand and model can be so interesting from a research
+ point of view but is not available.
 \end_layout
 
 \begin_layout Itemize
 Casualties: Describe the people involved in the accident.
- It have the fields Accident Index and VehicleReferenceNumber that allows
- to link with the accident and the vehicle.
- Also the Year is the same than in the two other data sources.
- CasualtyNumber allow to identify casualty in this accident, no way to know
- if the same people is involved in several accidents neither.
+ It have the fields Accident_Index and Vehicle_Reference that allow to link
+ with the accident and the vehicle.
+ Casualty_Reference allow to identify the casualty in this accident There
+ is no way to know if the same people is involved in several accidents neither.
  The other fields describe the casualties age, sex and how it was involved
  in the accident.
 \end_layout
 
 \begin_layout Standard
-In general the data lack of a good explanation of the meaning and possible
- values of the fields but can be discovered from the Accident Statistic
- Model.
- For example the Severity of the accident that have values 1,2,3 must be
- FATAL, SERIOUS, SLIGHT respectively.
-\end_layout
-
-\begin_layout Standard
-The data guide document available only enumerate the fields and explain
- the possible values of the AgeBand and CasualtyType fields.
- 
+The document Brief guide to road accidents and safety data: Great Britain
+ included with in the zip file introduce the data and link to additional
+ documents.
+ The document Road-Accident-Safety-Data-Guide-1979-2004.xls expose the codificati
+on of the fields.
+ Also explain that they also use -1 to represent lack of information but
+ there are fields with NULL and empty values.
 \end_layout
 
 \begin_layout Standard
@@ -168,6 +162,7 @@ noprefix "false"
 \end_inset
 
 .
+ 
 \end_layout
 
 \begin_layout Section
@@ -176,20 +171,13 @@ Integration in Spark
 
 \begin_layout Standard
 We read each csv file to a DataFrame.
- The data can be integrated joining using the Accident Index and VehicleReferenc
-eNumber.
- We first join Vehicles and Causalities dataframes because all the casualties
- are always related to one vehicle so we don't lose any casualties.
- We use a left join, so the vehicles that are not involves with casualties
- get the casualties field to null in the join.
- Them , we join the previous result with Accident using the Accident Index
- field.
- In all join we include the Year as join field in order too remove the repetitio
-ns of this column.
- Our final integrated data have for one row for each accident, car and casualty
- involved.
- So, it is a good way to queries that involve data related to the tree original
- sources but have a lot or repetitions.
+ The data can be integrated joining the different dataframes using the Accident_
+Index and Vehicle_Reference fields.
+ Depending of the query we are interested different joins can be done.
+ For example, to know the ages of drivers involved in in fatal accidents
+ must be joined Accidents and Vehicles while for know the number of fatal
+ casualties per accident Accident and Casualties must be joined.
+ We create 3 dataframes with all the possible joins and use they as needed.
  
 \end_layout
 
@@ -197,74 +185,154 @@ ns of this column.
 Discoveries
 \end_layout
 
-\begin_layout Subsection
-Age of driver again fatal accidents
+\begin_layout Standard
+First we try to find the possibles more important causes of fatal accidents.
+ For this we count the frequency of the values of fields that we consider
+ can contribute to the accidents: Day of the week, Road_Type, Light_Condition,
+ Weather_Condition, Road_Surface_Conditions, Vehicle_Type, Sex_of_Driver
+ and Age_Band_of_Driver and Age_of_Vehicle.
 \end_layout
 
-\begin_layout LyX-Code
-+---------------+---------+ 
+\begin_layout Itemize
+Field: Day_of_Week 
 \end_layout
 
-\begin_layout LyX-Code
-|AgeBandOfDriver|Frequency| 
+\begin_deeper
+\begin_layout Standard
+3 13486 
 \end_layout
 
-\begin_layout LyX-Code
-+---------------+---------+ 
+\begin_layout Standard
+2 13977 
 \end_layout
 
-\begin_layout LyX-Code
-| 1| 1| 
+\begin_layout Standard
+4 14088 
 \end_layout
 
-\begin_layout LyX-Code
-| 2| 2| 
+\begin_layout Standard
+1 14540 
 \end_layout
 
-\begin_layout LyX-Code
-| 3| 7| 
+\begin_layout Standard
+5 15300 
 \end_layout
 
-\begin_layout LyX-Code
-| 10| 50| 
+\begin_layout Standard
+7 17618 
 \end_layout
 
-\begin_layout LyX-Code
-| 11| 52| 
+\begin_layout Standard
+6 18524 
 \end_layout
 
-\begin_layout LyX-Code
-| 0| 67| 
+\end_deeper
+\begin_layout Itemize
+Field: Light_Conditions 
 \end_layout
 
-\begin_layout LyX-Code
-| 9| 111| 
+\begin_deeper
+\begin_layout Standard
+-1 32 
 \end_layout
 
-\begin_layout LyX-Code
-| 4| 128| 
+\begin_layout Standard
+7 725 
 \end_layout
 
-\begin_layout LyX-Code
-| 5| 175| 
+\begin_layout Standard
+5 931 
 \end_layout
 
-\begin_layout LyX-Code
-| 8| 178| 
+\begin_layout Standard
+6 17659 
 \end_layout
 
-\begin_layout LyX-Code
-| 7| 243| 
+\begin_layout Standard
+4 27043 
 \end_layout
 
-\begin_layout LyX-Code
-| 6| 335| 
+\begin_layout Standard
+1 61143 
 \end_layout
 
-\begin_layout LyX-Code
-+---------------+---------+ 
+\end_deeper
+\begin_layout Itemize
+Field: Weather_Conditions 
 \end_layout
 
+\begin_deeper
+\begin_layout Standard
+-1 31 
+\end_layout
+
+\begin_layout Standard
+6 177 
+\end_layout
+
+\begin_layout Standard
+3 474 
+\end_layout
+
+\begin_layout Standard
+9 625 
+\end_layout
+
+\begin_layout Standard
+7 1126 
+\end_layout
+
+\begin_layout Standard
+5 1873 
+\end_layout
+
+\begin_layout Standard
+4 2421 
+\end_layout
+
+\begin_layout Standard
+8 3871 
+\end_layout
+
+\begin_layout Standard
+2 12566 
+\end_layout
+
+\begin_layout Standard
+1 84369 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Road_Surface_Conditions 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+-1 151
+\end_layout
+
+\begin_layout Standard
+5 192 
+\end_layout
+
+\begin_layout Standard
+3 558 
+\end_layout
+
+\begin_layout Standard
+4 1828 
+\end_layout
+
+\begin_layout Standard
+2 37053 
+\end_layout
+
+\begin_layout Standard
+1 67751
+\end_layout
+
+\end_deeper
 \begin_layout Section
 Accidents hot spots
 \end_layout
@@ -293,111 +361,131 @@ Accidents:
 \end_layout
 
 \begin_layout Itemize
-Accident Index 100000062008 114999522008 
+Accident_Index 197901A11AD14 2004984164804 
 \end_layout
 
 \begin_layout Itemize
-Year 2005 2018 
+Location_Easting_OSGR 0 9999 
 \end_layout
 
 \begin_layout Itemize
-Severity 1 3 
+Location_Northing_OSGR 0 12137 
 \end_layout
 
 \begin_layout Itemize
-NumberVehicles 1 19 
+Longitude -0.000001 NULL 
 \end_layout
 
 \begin_layout Itemize
-NumberCasualties 1 87 
+Latitude 49.912761 NULL 
 \end_layout
 
 \begin_layout Itemize
-OutputDate 01/01/2005 31/12/2018 
+Police_Force 1 98 
 \end_layout
 
 \begin_layout Itemize
-Day 1 7 
+Accident_Severity 1 3 
 \end_layout
 
 \begin_layout Itemize
-OutputTime 00:00 23:59 
+Number_of_Vehicles 1 192 
 \end_layout
 
 \begin_layout Itemize
-Easting 352359 404673 
+Number_of_Casualties 1 90 
 \end_layout
 
 \begin_layout Itemize
-Northing 381831 419597 
+Date 01/01/1979 NULL 
 \end_layout
 
 \begin_layout Itemize
-LocalAuthority 1 114 
+Day_of_Week 1 7 
 \end_layout
 
 \begin_layout Itemize
-Road1Class 1 7 
+Time 00:01 NULL 
 \end_layout
 
 \begin_layout Itemize
-Road1Number 0 6536 
+Local_Authority_(District) 1 941 
 \end_layout
 
 \begin_layout Itemize
-CarriagewayType 1 9 
+Local_Authority_(Highway) 9999 W06000024 
 \end_layout
 
 \begin_layout Itemize
-SpeedLimit 20 70 
+1st_Road_Class -1 6 
 \end_layout
 
 \begin_layout Itemize
-JunctionDetail 0 9 
+1st_Road_Number -1 9999 
 \end_layout
 
 \begin_layout Itemize
-JunctionControl 0 4 
+Road_Type -1 9 
 \end_layout
 
 \begin_layout Itemize
-Road2Class 0 7 
+Speed_limit 0 6 
 \end_layout
 
 \begin_layout Itemize
-Road2Number 0 6536 
+Junction_Detail -1 9 
 \end_layout
 
 \begin_layout Itemize
-PedCrossingHumanControl 0 2 
+Junction_Control -1 4 
 \end_layout
 
 \begin_layout Itemize
-PedCrossingPhysicalFacilities 0 8 
+2nd_Road_Class -1 6 
 \end_layout
 
 \begin_layout Itemize
-LightingCondition 1 7 
+2nd_Road_Number -1 9999 
 \end_layout
 
 \begin_layout Itemize
-WeatherCondition 1 9 
+Pedestrian_Crossing-Human_Control -1 2 
 \end_layout
 
 \begin_layout Itemize
-RoadSurface 1 9 
+Pedestrian_Crossing-Physical_Facilities -1 8 
 \end_layout
 
 \begin_layout Itemize
-SpecialConditions 0 7 
+Light_Conditions -1 7 
 \end_layout
 
 \begin_layout Itemize
-CarriagewayHazard 0 7 
+Weather_Conditions -1 9 
 \end_layout
 
 \begin_layout Itemize
-PlaceReported 1 2 
+Road_Surface_Conditions -1 5 
+\end_layout
+
+\begin_layout Itemize
+Special_Conditions_at_Site -1 5 
+\end_layout
+
+\begin_layout Itemize
+Carriageway_Hazards -1 3 
+\end_layout
+
+\begin_layout Itemize
+Urban_or_Rural_Area -1 3 
+\end_layout
+
+\begin_layout Itemize
+Did_Police_Officer_Attend_Scene_of_Accident -1 3 
+\end_layout
+
+\begin_layout Itemize
+LSOA_of_Accident_Location E01000001 W01001842 
 \end_layout
 
 \begin_layout Standard
@@ -405,71 +493,83 @@ Vehicles:
 \end_layout
 
 \begin_layout Itemize
-Accident Index 100000062008 114999522008 
+Vehicle_Reference 0 201 
 \end_layout
 
 \begin_layout Itemize
-Year 2005 2018 
+Vehicle_Type -1 113 
 \end_layout
 
 \begin_layout Itemize
-VehicleReferenceNumber 1 19 
+Towing_and_Articulation -1 5 
 \end_layout
 
 \begin_layout Itemize
-VehicleType 1 96 
+Vehicle_Manoeuvre -1 18 
 \end_layout
 
 \begin_layout Itemize
-ArtTowing 0 5 
+Vehicle_Location-Restricted_Lane -1 9 
 \end_layout
 
 \begin_layout Itemize
-Manoeuvre 1 18 
+Junction_Location -1 -1 
 \end_layout
 
 \begin_layout Itemize
-VehicleLocationOffRoad 0 9 
+Skidding_and_Overturning -1 5 
 \end_layout
 
 \begin_layout Itemize
-JunctionLocation 0 99 
+Hit_Object_in_Carriageway -1 11 
 \end_layout
 
 \begin_layout Itemize
-Skidding 0 5 
+Vehicle_Leaving_Carriageway -1 8 
 \end_layout
 
 \begin_layout Itemize
-HitObjectOnCWay 0 12 
+Hit_Object_off_Carriageway -1 10 
 \end_layout
 
 \begin_layout Itemize
-VehicleLeaveCWay 0 8 
+1st_Point_of_Impact -1 4 
 \end_layout
 
 \begin_layout Itemize
-HitObjectOffCWay 0 10 
+Was_Vehicle_Left_Hand_Drive? -1 -1 
 \end_layout
 
 \begin_layout Itemize
-FirstPointImpact 0 4 
+Journey_Purpose_of_Driver -1 -1 
 \end_layout
 
 \begin_layout Itemize
-JourneyPurpose 1 5 
+Sex_of_Driver -1 3 
 \end_layout
 
 \begin_layout Itemize
-ForeignReg 0 9 
+Age_Band_of_Driver -1 11 
 \end_layout
 
 \begin_layout Itemize
-SexOfDriver 1 3 
+Engine_Capacity_(CC) -1 99999 
 \end_layout
 
 \begin_layout Itemize
-AgeBandOfDriver 0 11 
+Propulsion_Code -1 9 
+\end_layout
+
+\begin_layout Itemize
+Age_of_Vehicle -1 99 
+\end_layout
+
+\begin_layout Itemize
+Driver_IMD_Decile -1 10 
+\end_layout
+
+\begin_layout Itemize
+Driver_Home_Area_Type -1 3 
 \end_layout
 
 \begin_layout Standard
@@ -477,59 +577,51 @@ Casualties
 \end_layout
 
 \begin_layout Itemize
-Accident Index 100000062008 114999522008 
+Casualty_Reference 0 991 
 \end_layout
 
 \begin_layout Itemize
-Year 2005 2018 
+Casualty_Class 1 3 
 \end_layout
 
 \begin_layout Itemize
-VehicleReferenceNumber 1 18 
+Sex_of_Casualty -1 2 
 \end_layout
 
 \begin_layout Itemize
-CasualtyNumber 1 87 
+Age_Band_of_Casualty -1 11 
 \end_layout
 
 \begin_layout Itemize
-CasualtyClass 1 3 
+Casualty_Severity 1 3 
 \end_layout
 
 \begin_layout Itemize
-Sex 1 2 
+Pedestrian_Location -1 10 
 \end_layout
 
 \begin_layout Itemize
-AgeBandOfCasualty 1 255 
+Pedestrian_Movement -1 9 
 \end_layout
 
 \begin_layout Itemize
-CasualtySeverity 1 3 
+Car_Passenger -1 2 
 \end_layout
 
 \begin_layout Itemize
-PedLocation 0 10 
+Bus_or_Coach_Passenger -1 4 
 \end_layout
 
 \begin_layout Itemize
-PedMovement 0 9 
+Pedestrian_Road_Maintenance_Worker -1 0 
 \end_layout
 
 \begin_layout Itemize
-CarPassenger 0 2 
+Casualty_Type -1 113 
 \end_layout
 
 \begin_layout Itemize
-BusPassenger 0 4 
-\end_layout
-
-\begin_layout Itemize
-PedInjWork 0 2 
-\end_layout
-
-\begin_layout Itemize
-CasTypeCode 0 96 
+Casualty_Home_Area_Type -1 3 
 \end_layout
 
 \end_body

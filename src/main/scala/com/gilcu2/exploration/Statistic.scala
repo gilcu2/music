@@ -36,6 +36,17 @@ object Statistic {
 
   }
 
+  def showSeverityAgaintsAccidentFields(accidents: DataFrame, severity: Int, fields: Seq[String]): Unit = {
+
+    fields.foreach(field => {
+      val freq = computeAbsoluteFrequency(accidents, accidentSeveriteField, severity, field)
+      println(s"Field: $field")
+      freq.foreach(v => println(s"${v._1} ${v._2}"))
+    })
+
+
+  }
+
   def showSeverityAgaintsVehicleFields(accidentVehicles: DataFrame, severity: Int, fields: Seq[String]): Unit = {
     val filtered = accidentVehicles.filter(accidentVehicles(accidentSeveriteField) === severity)
 

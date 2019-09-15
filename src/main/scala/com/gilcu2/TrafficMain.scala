@@ -36,8 +36,8 @@ object TrafficMain extends MainTrait {
       Exploration.showSummaries(data)
 
     if (argumentsExploration.doFrequency) {
-      val fields = Seq(driverAgeField, lightConditionField, weatherConditionField, roadConditionField)
-      Statistic.showSeverityAgaintsVehicleFields(accidentVehicles, severity = 1, fields)
+      val fields = Seq(dayOfWeek, lightConditionField, weatherConditionField, roadConditionField)
+      Statistic.showSeverityAgaintsAccidentFields(data.accidents, severity = 1, fields)
     }
 
 
