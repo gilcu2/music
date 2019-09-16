@@ -1,5 +1,6 @@
 package com.gilcu2.exploration
 
+import com.gilcu2.preprocessing.Preprocessing
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
@@ -8,7 +9,6 @@ import com.gilcu2.preprocessing.Preprocessing._
 object Statistic {
 
   val labelFrequency = "Frequency"
-
 
   def computeFrequency(df: DataFrame, column: String): DataFrame =
     df.select(column)
@@ -36,7 +36,7 @@ object Statistic {
 
   }
 
-  def showSeverityAgaintsAccidentFields(accidents: DataFrame, severity: Int, fields: Seq[String]): Unit = {
+  def showSeverityAgainstAccidentFields(accidents: DataFrame, severity: Int, fields: Seq[String]): Unit = {
 
     fields.foreach(field => {
       val freq = computeAbsoluteFrequency(accidents, accidentSeveriteField, severity, field)
@@ -47,12 +47,13 @@ object Statistic {
 
   }
 
-  def showSeverityAgaintsVehicleFields(accidentVehicles: DataFrame, severity: Int, fields: Seq[String]): Unit = {
-    val filtered = accidentVehicles.filter(accidentVehicles(accidentSeveriteField) === severity)
+  def showSeverityAgainstVehicleFields(accidents: DataFrame, vehicles: DataFrame, severity: Int, fields: Seq[String]): Unit = {
+    val accidentVehicles = Preprocessing.joinAccidentWithVehicles(accidents, vehicles)
 
     fields.foreach(field => {
-      val freq = computeFrequency(filtered, field)
-      freq.show()
+      val freq = computeAbsoluteFrequency(accidentVehicles, accidentSeveriteField, severity, field)
+      println(s"Field: $field")
+      freq.foreach(v => println(s"${v._1} ${v._2}"))
     })
 
 

@@ -185,160 +185,56 @@ Index and Vehicle_Reference fields.
 Discoveries
 \end_layout
 
+\begin_layout Subsection
+Absolute frequencies
+\end_layout
+
 \begin_layout Standard
 First we try to find the possibles more important causes of fatal accidents.
  For this we count the frequency of the values of fields that we consider
  can contribute to the accidents: Day of the week, Road_Type, Light_Condition,
  Weather_Condition, Road_Surface_Conditions, Vehicle_Type, Sex_of_Driver
- and Age_Band_of_Driver and Age_of_Vehicle.
-\end_layout
-
-\begin_layout Itemize
-Field: Day_of_Week 
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
-3 13486 
+ and Age_Band_of_Driver and Age_of_Vehicle when the accident have fatal
+ casualties (Accident_Severity field equal 1).
 \end_layout
 
 \begin_layout Standard
-2 13977 
+The results (See Appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Frequencies"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) don't show something interesting because reflect the normal frequency
+ of events.
+ For example, the most frequent fatal accidents occurs when light conditions
+ are Day Light because the cars move more frequently in the day not because
+ the Day Light increase the probabilities of accident.
+ So, we need some way to take into account the universe, for example the
+ total numbers of car moving during the day.
+ As this information is very difficult to have, we can use the total of
+ accident cars in Day Light as an approximation.
+ 
 \end_layout
 
-\begin_layout Standard
-4 14088 
+\begin_layout Subsection
+Relative frequencies
 \end_layout
 
-\begin_layout Standard
-1 14540 
-\end_layout
-
-\begin_layout Standard
-5 15300 
-\end_layout
-
-\begin_layout Standard
-7 17618 
-\end_layout
-
-\begin_layout Standard
-6 18524 
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Field: Light_Conditions 
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
--1 32 
-\end_layout
-
-\begin_layout Standard
-7 725 
-\end_layout
-
-\begin_layout Standard
-5 931 
-\end_layout
-
-\begin_layout Standard
-6 17659 
-\end_layout
-
-\begin_layout Standard
-4 27043 
-\end_layout
-
-\begin_layout Standard
-1 61143 
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Field: Weather_Conditions 
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
--1 31 
-\end_layout
-
-\begin_layout Standard
-6 177 
-\end_layout
-
-\begin_layout Standard
-3 474 
-\end_layout
-
-\begin_layout Standard
-9 625 
-\end_layout
-
-\begin_layout Standard
-7 1126 
-\end_layout
-
-\begin_layout Standard
-5 1873 
-\end_layout
-
-\begin_layout Standard
-4 2421 
-\end_layout
-
-\begin_layout Standard
-8 3871 
-\end_layout
-
-\begin_layout Standard
-2 12566 
-\end_layout
-
-\begin_layout Standard
-1 84369 
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Field: Road_Surface_Conditions 
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
--1 151
-\end_layout
-
-\begin_layout Standard
-5 192 
-\end_layout
-
-\begin_layout Standard
-3 558 
-\end_layout
-
-\begin_layout Standard
-4 1828 
-\end_layout
-
-\begin_layout Standard
-2 37053 
-\end_layout
-
-\begin_layout Standard
-1 67751
-\end_layout
-
-\end_deeper
 \begin_layout Section
 Accidents hot spots
 \end_layout
 
 \begin_layout Section
 Conclusions
+\end_layout
+
+\begin_layout Section*
+Appendix
 \end_layout
 
 \begin_layout Subsection*
@@ -624,5 +520,400 @@ Casualty_Type -1 113
 Casualty_Home_Area_Type -1 3 
 \end_layout
 
+\begin_layout Subsection*
+Frequencies
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Frequencies"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Field: Day_of_Week 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+3 13486 
+\end_layout
+
+\begin_layout Standard
+2 13977 
+\end_layout
+
+\begin_layout Standard
+4 14088 
+\end_layout
+
+\begin_layout Standard
+1 14540 
+\end_layout
+
+\begin_layout Standard
+5 15300 
+\end_layout
+
+\begin_layout Standard
+7 17618 
+\end_layout
+
+\begin_layout Standard
+6 18524 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Light_Conditions 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+-1 32 
+\end_layout
+
+\begin_layout Standard
+7 725 
+\end_layout
+
+\begin_layout Standard
+5 931 
+\end_layout
+
+\begin_layout Standard
+6 17659 
+\end_layout
+
+\begin_layout Standard
+4 27043 
+\end_layout
+
+\begin_layout Standard
+1 61143 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Weather_Conditions 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+-1 31 
+\end_layout
+
+\begin_layout Standard
+6 177 
+\end_layout
+
+\begin_layout Standard
+3 474 
+\end_layout
+
+\begin_layout Standard
+9 625 
+\end_layout
+
+\begin_layout Standard
+7 1126 
+\end_layout
+
+\begin_layout Standard
+5 1873 
+\end_layout
+
+\begin_layout Standard
+4 2421 
+\end_layout
+
+\begin_layout Standard
+8 3871 
+\end_layout
+
+\begin_layout Standard
+2 12566 
+\end_layout
+
+\begin_layout Standard
+1 84369 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Road_Surface_Conditions 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+-1 151
+\end_layout
+
+\begin_layout Standard
+5 192 
+\end_layout
+
+\begin_layout Standard
+3 558 
+\end_layout
+
+\begin_layout Standard
+4 1828 
+\end_layout
+
+\begin_layout Standard
+2 37053 
+\end_layout
+
+\begin_layout Standard
+1 67751
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Sex_of_Driver 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+-1 254 
+\end_layout
+
+\begin_layout Standard
+3 3804 
+\end_layout
+
+\begin_layout Standard
+2 24839 
+\end_layout
+
+\begin_layout Standard
+1 153534 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Age_Band_of_Driver 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+1 167 
+\end_layout
+
+\begin_layout Standard
+2 417 
+\end_layout
+
+\begin_layout Standard
+3 1434 
+\end_layout
+
+\begin_layout Standard
+11 4083 
+\end_layout
+
+\begin_layout Standard
+-1 5749 
+\end_layout
+
+\begin_layout Standard
+10 6895 
+\end_layout
+
+\begin_layout Standard
+9 13822 
+\end_layout
+
+\begin_layout Standard
+8 21792 
+\end_layout
+
+\begin_layout Standard
+4 25733 
+\end_layout
+
+\begin_layout Standard
+5 27673 
+\end_layout
+
+\begin_layout Standard
+7 31893 
+\end_layout
+
+\begin_layout Standard
+6 42773 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Age_of_Vehicle 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+17 364 
+\end_layout
+
+\begin_layout Standard
+16 546 
+\end_layout
+
+\begin_layout Standard
+15 1006 
+\end_layout
+
+\begin_layout Standard
+14 1458 
+\end_layout
+
+\begin_layout Standard
+13 2104 
+\end_layout
+
+\begin_layout Standard
+12 2944 
+\end_layout
+
+\begin_layout Standard
+11 3573 
+\end_layout
+
+\begin_layout Standard
+10 4166 
+\end_layout
+
+\begin_layout Standard
+9 4519 
+\end_layout
+
+\begin_layout Standard
+8 4876 
+\end_layout
+
+\begin_layout Standard
+7 5086 
+\end_layout
+
+\begin_layout Standard
+6 5321 
+\end_layout
+
+\begin_layout Standard
+5 5603 
+\end_layout
+
+\begin_layout Standard
+4 5993 
+\end_layout
+
+\begin_layout Standard
+3 6038 
+\end_layout
+
+\begin_layout Standard
+2 6601 
+\end_layout
+
+\begin_layout Standard
+1 7255 
+\end_layout
+
+\begin_layout Standard
+-1 114356 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Vehicle_Type 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+18 5 
+\end_layout
+
+\begin_layout Standard
+16 16 
+\end_layout
+
+\begin_layout Standard
+-1 53 
+\end_layout
+
+\begin_layout Standard
+105 72 
+\end_layout
+
+\begin_layout Standard
+10 140 
+\end_layout
+
+\begin_layout Standard
+17 181 
+\end_layout
+
+\begin_layout Standard
+103 333 
+\end_layout
+
+\begin_layout Standard
+20 456 
+\end_layout
+
+\begin_layout Standard
+3 475 
+\end_layout
+
+\begin_layout Standard
+108 928 
+\end_layout
+
+\begin_layout Standard
+110 981 
+\end_layout
+
+\begin_layout Standard
+2 1205 
+\end_layout
+
+\begin_layout Standard
+90 2400 
+\end_layout
+
+\begin_layout Standard
+21 2889 
+\end_layout
+
+\begin_layout Standard
+106 3509 
+\end_layout
+
+\begin_layout Standard
+11 4620 
+\end_layout
+
+\begin_layout Standard
+1 6433 
+\end_layout
+
+\begin_layout Standard
+19 10665 
+\end_layout
+
+\begin_layout Standard
+104 15989 
+\end_layout
+
+\begin_layout Standard
+113 16127 
+\end_layout
+
+\begin_layout Standard
+109 114954 
+\end_layout
+
+\end_deeper
 \end_body
 \end_document

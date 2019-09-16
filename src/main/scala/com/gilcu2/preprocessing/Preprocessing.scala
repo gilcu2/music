@@ -10,12 +10,13 @@ object Preprocessing {
   val casualtyNumberField = "Casualty_Reference"
   val accidentSeveriteField = "Accident_Severity"
   val driverAgeField = "Age_Band_of_Driver"
-  val sexDriverField = "Sex_of_Driver"
+  val driverSexField = "Sex_of_Driver"
   val lightConditionField = "Light_Conditions"
   val weatherConditionField = "Weather_Conditions"
   val roadConditionField = "Road_Surface_Conditions"
   val dayOfWeek = "Day_of_Week"
   val ageVehicle = "Age_of_Vehicle"
+  val vehicleTypeField = "Vehicle_Type"
 
   def joinVehiclesWithCasualties(vehicles: DataFrame, casualties: DataFrame): DataFrame = {
 
