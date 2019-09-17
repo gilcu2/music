@@ -1,6 +1,6 @@
 package com.gilcu2
 
-import com.gilcu2.exploration.{Data, Exploration, Statistic}
+import com.gilcu2.exploration.{Clustering, Data, Exploration, Statistic}
 import com.gilcu2.interfaces.{ConfigValuesTrait, LineArgumentValuesTrait, MainTrait, Spark}
 import com.gilcu2.preprocessing.Preprocessing
 import com.gilcu2.preprocessing.Preprocessing._
@@ -51,7 +51,11 @@ object TrafficMain extends MainTrait {
     }
 
     if (argumentsExploration.doHotSpot) {
-      //      val clustering=C
+      import spark.implicits._
+      val clustering = Clustering.findHotSpots(data.accidents, severity = 1, minimunAccidents = 2)
+      val notUnitary = clustering.filter(_.coordinates.size > 1)
+      //      clustering.toDF().write.json("hotspots.json")
+      notUnitary.toDF().write.json("hotspots1.json")
     }
 
   }

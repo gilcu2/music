@@ -90,7 +90,10 @@ gilcu2@gmail.com
 
 \begin_layout Abstract
 The ALLSTATS19 data have the accidents happened in Manchester area between
- 2005 and 2018 was studied.
+ 1979 and 2004.
+ The data was analyzed to find relevant facts.
+ Also a clustering algorithm bases on connected components was applied to
+ find the ways region with high accident occurrence.
 \end_layout
 
 \begin_layout Section
@@ -225,12 +228,49 @@ noprefix "false"
 Relative frequencies
 \end_layout
 
+\begin_layout Standard
+The analysis of the relative frequencies shows some interesting facts.
+ For example fatal accidents are more probable on Sunday, in Dark conditions
+ without light, with Snowing and strong winds, the way with oil, male drivers
+ with more than 75 years, old cars and big good vehicles.
+\end_layout
+
+\begin_layout Standard
+The total results are shown in appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Relative-frequencies"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Accidents hot spots
 \end_layout
 
+\begin_layout Standard
+To find the region with high accident count we create a graph where to point
+ are connected in the difference between its coordinates is one in any edge.
+ Then the hot spots are the connected components of this graph.
+\end_layout
+
+\begin_layout Standard
+The algorithm was implemented using Spark graphX and allow to filtering
+ by the number of accidents that happen in a point to be considered.
+\end_layout
+
 \begin_layout Section
 Conclusions
+\end_layout
+
+\begin_layout Standard
+The application of statistic techniques to the accident traffic data have
+ allow to discover interesting 
 \end_layout
 
 \begin_layout Section*
@@ -912,6 +952,237 @@ Field: Vehicle_Type
 
 \begin_layout Standard
 109 114954 
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Relative frequencies
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Relative-frequencies"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Field: Day_of_Week 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+3 0.015375915246623479 
+\end_layout
+
+\begin_layout Standard
+4 0.015818460484726675 
+\end_layout
+
+\begin_layout Standard
+2 0.016002573784493636 
+\end_layout
+
+\begin_layout Standard
+5 0.01637833307106591 
+\end_layout
+
+\begin_layout Standard
+6 0.017494302829744093 
+\end_layout
+
+\begin_layout Standard
+7 0.01965816352717754 
+\end_layout
+
+\begin_layout Standard
+1 0.020955628546350996 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Light_Conditions 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+7 0.013729760439352335 
+\end_layout
+
+\begin_layout Standard
+1 0.01380652885352949 
+\end_layout
+
+\begin_layout Standard
+-1 0.019464720194647202 
+\end_layout
+
+\begin_layout Standard
+4 0.020075765730520168 
+\end_layout
+
+\begin_layout Standard
+5 0.024775134387141413 
+\end_layout
+
+\begin_layout Standard
+6 0.04952505419738787 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Weather_Conditions 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+9 0.011391182313594693 
+\end_layout
+
+\begin_layout Standard
+3 0.01239539748953975 
+\end_layout
+
+\begin_layout Standard
+2 0.014214337182719727 
+\end_layout
+
+\begin_layout Standard
+8 0.015039843346297153 
+\end_layout
+
+\begin_layout Standard
+6 0.01600361663652803 
+\end_layout
+
+\begin_layout Standard
+-1 0.01615424700364773 
+\end_layout
+
+\begin_layout Standard
+1 0.017844033641171413 
+\end_layout
+
+\begin_layout Standard
+5 0.02011016030149135 
+\end_layout
+
+\begin_layout Standard
+7 0.021678025489969582 
+\end_layout
+
+\begin_layout Standard
+4 0.023396277469607065 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Road_Surface_Conditions 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+3 0.012620436965666983 
+\end_layout
+
+\begin_layout Standard
+-1 0.013153310104529617 
+\end_layout
+
+\begin_layout Standard
+4 0.014432680388766512 
+\end_layout
+
+\begin_layout Standard
+1 0.01696968270042152 
+\end_layout
+
+\begin_layout Standard
+2 0.01815607966272116 
+\end_layout
+
+\begin_layout Standard
+5 0.022403733955659276 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Sex_of_Driver 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+3 0.007859374225219418 
+\end_layout
+
+\begin_layout Standard
+2 0.009861187479281342 
+\end_layout
+
+\begin_layout Standard
+-1 0.0110051993067591 
+\end_layout
+
+\begin_layout Standard
+1 0.019297852002541475 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Field: Age_Band_of_Driver 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+2 0.006420916481892092 
+\end_layout
+
+\begin_layout Standard
+-1 0.006872913857248061 
+\end_layout
+
+\begin_layout Standard
+1 0.008040055847094506 
+\end_layout
+
+\begin_layout Standard
+3 0.009036543175645445 
+\end_layout
+
+\begin_layout Standard
+6 0.01634565521531989 
+\end_layout
+
+\begin_layout Standard
+7 0.016724051317924253 
+\end_layout
+
+\begin_layout Standard
+4 0.016905792564552168 
+\end_layout
+
+\begin_layout Standard
+5 0.01790600721209686 
+\end_layout
+
+\begin_layout Standard
+8 0.018405731858419785 
+\end_layout
+
+\begin_layout Standard
+9 0.019745291172332022 
+\end_layout
+
+\begin_layout Standard
+10 0.023135332467645767 
+\end_layout
+
+\begin_layout Standard
+11 0.03197988627285117 
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_deeper

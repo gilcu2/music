@@ -12,7 +12,7 @@ case class Cluster(id: Long, coordinates: Seq[CoordinateCount])
 
 object Clustering {
 
-  def findHotSpot(accidents: DataFrame, severity: Int, minimunAccidents: Int, maxIterations: Int = 10)(implicit spark: SparkSession): RDD[Cluster] = {
+  def findHotSpots(accidents: DataFrame, severity: Int, minimunAccidents: Int, maxIterations: Int = 10)(implicit spark: SparkSession): RDD[Cluster] = {
     import spark.implicits._
 
     val filtered = accidents

@@ -17,7 +17,7 @@ class ClusteringTest extends FlatSpec with Matchers with GivenWhenThen with Spar
     And("the expected result")
 
     When("compute the hot spots")
-    val hotSpots = Clustering.findHotSpot(accidents, severity = 1, minimunAccidents = 1, maxIterations = 2)
+    val hotSpots = Clustering.findHotSpots(accidents, severity = 1, minimunAccidents = 1, maxIterations = 2)
 
     Then("it should be the expected")
     hotSpots.count shouldBe 4
