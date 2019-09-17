@@ -1,17 +1,18 @@
 package com.gilcu2.exploration
 
 import com.gilcu2.preprocessing.Preprocessing._
+import org.apache.spark.graphx._
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
-import org.apache.spark.graphx._
 
 case class CoordinateCount(id: Long, x: Long, y: Long, count: Long)
 
-case class Cluster(coordinates: Seq[CoordinateCount])
+case class Cluster(id: Long, coordinates: Seq[CoordinateCount])
 
 object Clustering {
 
-  def findHotSpot(accidents: DataFrame, severity: Int)(implicit spark: SparkSession): Dataset[Cluster] = {
+  def findHotSpot(accidents: DataFrame, severity: Int, minimunAccidents: Int, maxIterations: Int = 10)(implicit spark: SparkSession): RDD[Cluster] = {
     import spark.implicits._
 
     val filtered = accidents
@@ -32,6 +33,7 @@ object Clustering {
       .withColumnRenamed("sum(count)", "count")
       .withColumn("id", monotonically_increasing_id())
       .as[CoordinateCount]
+      .filter(_.count >= minimunAccidents)
       .cache()
 
     groupedByCoordinate.show()
@@ -57,17 +59,30 @@ object Clustering {
       .select("id", "id1")
       .rdd
       .map(r => Edge(r.getLong(r.fieldIndex("id")), r.getLong(r.fieldIndex("id1")), ""))
+      .cache()
 
     val nodes = groupedByCoordinate
       .rdd
       .map(r => (r.id, r))
+      .cache()
 
     val g = Graph(nodes, edges)
 
-    val connectedComponents = g.connectedComponents(10)
-    connectedComponents.vertices.collect().foreach(println)
+    val connectedComponents = g.connectedComponents(maxIterations)
 
-    spark.emptyDataset[Cluster]
+    val clusterIds = connectedComponents.vertices
+
+    val clustering = clusterIds
+      .innerJoin(g.vertices) { case (nodeId, clusterId, coordinateCount) =>
+        (clusterId, coordinateCount)
+      }
+      .groupBy(_._2._1)
+      .map { case (nodeId, clusterSeq) =>
+        Cluster(clusterSeq.head._1,
+          clusterSeq.map(_._2._2).toSeq)
+      }
+
+    clustering
   }
 
   //    Code to log udf

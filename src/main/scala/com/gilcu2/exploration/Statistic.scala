@@ -32,7 +32,9 @@ object Statistic {
 
     val targetFrequency = computeAbsoluteFrequency(df, targetField, targetValue, primaryField)
 
-    targetFrequency.map { case (value, frequency) => (value, frequency.toDouble / totalFrequency(value)) }
+    targetFrequency
+      .map { case (value, frequency) => (value, frequency.toDouble / totalFrequency(value)) }
+      .sortBy(_._2)
 
   }
 
@@ -43,7 +45,6 @@ object Statistic {
       println(s"Field: $field")
       freq.foreach(v => println(s"${v._1} ${v._2}"))
     })
-
 
   }
 
@@ -56,6 +57,26 @@ object Statistic {
       freq.foreach(v => println(s"${v._1} ${v._2}"))
     })
 
+  }
+
+  def showRelativeSeverityAgainstAccidentFields(accidents: DataFrame, severity: Int, fields: Seq[String]): Unit = {
+
+    fields.foreach(field => {
+      val freq = computeRelativeFrequency(accidents, accidentSeveriteField, severity, field)
+      println(s"Field: $field")
+      freq.foreach(v => println(s"${v._1} ${v._2}"))
+    })
+
+  }
+
+  def showRelativeSeverityAgainstVehicleFields(accidents: DataFrame, vehicles: DataFrame, severity: Int, fields: Seq[String]): Unit = {
+    val accidentVehicles = Preprocessing.joinAccidentWithVehicles(accidents, vehicles)
+
+    fields.foreach(field => {
+      val freq = computeRelativeFrequency(accidentVehicles, accidentSeveriteField, severity, field)
+      println(s"Field: $field")
+      freq.foreach(v => println(s"${v._1} ${v._2}"))
+    })
 
   }
 

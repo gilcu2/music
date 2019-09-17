@@ -3,10 +3,10 @@ package com.gilcu2
 import com.gilcu2.exploration.{Data, Exploration, Statistic}
 import com.gilcu2.interfaces.{ConfigValuesTrait, LineArgumentValuesTrait, MainTrait, Spark}
 import com.gilcu2.preprocessing.Preprocessing
+import com.gilcu2.preprocessing.Preprocessing._
 import com.typesafe.config.Config
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.rogach.scallop.ScallopConf
-import Preprocessing._
 
 object TrafficMain extends MainTrait {
 
@@ -44,14 +44,14 @@ object TrafficMain extends MainTrait {
 
     if (argumentsExploration.doRelativeFrequency) {
       val fieldsAccidents = Seq(dayOfWeek, lightConditionField, weatherConditionField, roadConditionField)
-      //      Statistic.showSeverityAgainstAccidentFields(data.accidents, severity = 1, fieldsAccidents)
+      Statistic.showRelativeSeverityAgainstAccidentFields(data.accidents, severity = 1, fieldsAccidents)
 
       val fieldsVehicles = Seq(driverSexField, driverAgeField, ageVehicle, vehicleTypeField)
-      //      Statistic.showSeverityAgainstVehicleFields(data.accidents, data.vehicles, severity = 1, fieldsVehicles)
+      Statistic.showRelativeSeverityAgainstVehicleFields(data.accidents, data.vehicles, severity = 1, fieldsVehicles)
     }
 
     if (argumentsExploration.doHotSpot) {
-
+      //      val clustering=C
     }
 
   }
