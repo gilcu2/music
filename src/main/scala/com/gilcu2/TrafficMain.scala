@@ -17,7 +17,6 @@ object TrafficMain extends MainTrait {
 
   }
 
-
   override def process(configValues: ConfigValuesTrait, lineArguments: LineArgumentValuesTrait)(
     implicit spark: SparkSession): Unit = {
 
@@ -43,7 +42,17 @@ object TrafficMain extends MainTrait {
       Statistic.showSeverityAgainstVehicleFields(data.accidents, data.vehicles, severity = 1, fieldsVehicles)
     }
 
+    if (argumentsExploration.doRelativeFrequency) {
+      val fieldsAccidents = Seq(dayOfWeek, lightConditionField, weatherConditionField, roadConditionField)
+      //      Statistic.showSeverityAgainstAccidentFields(data.accidents, severity = 1, fieldsAccidents)
 
+      val fieldsVehicles = Seq(driverSexField, driverAgeField, ageVehicle, vehicleTypeField)
+      //      Statistic.showSeverityAgainstVehicleFields(data.accidents, data.vehicles, severity = 1, fieldsVehicles)
+    }
+
+    if (argumentsExploration.doHotSpot) {
+
+    }
 
   }
 
@@ -67,8 +76,10 @@ object TrafficMain extends MainTrait {
 
     val doDomain = parsedArgs.domain()
     val doFrequency = parsedArgs.frequency()
+    val doRelativeFrequency = parsedArgs.relativeFrequency()
+    val doHotSpot = parsedArgs.hotSpots()
 
-    ArgumentsExploration(doDomain, doFrequency)
+    ArgumentsExploration(doDomain, doFrequency, doRelativeFrequency, doHotSpot)
   }
 
   case class ConfigExploration(accidentPath: String, vehiclePath: String, casualtyPath: String) extends ConfigValuesTrait
@@ -76,8 +87,11 @@ object TrafficMain extends MainTrait {
   class CommandLineParameterConf(arguments: Seq[String]) extends ScallopConf(arguments) {
     val domain = opt[Boolean](short = 'd')
     val frequency = opt[Boolean](short = 'f')
+    val relativeFrequency = opt[Boolean](short = 'r')
+    val hotSpots = opt[Boolean](short = 'h')
   }
 
-  case class ArgumentsExploration(doDommain: Boolean, doFrequency: Boolean) extends LineArgumentValuesTrait
+  case class ArgumentsExploration(doDommain: Boolean, doFrequency: Boolean,
+                                  doRelativeFrequency: Boolean, doHotSpot: Boolean) extends LineArgumentValuesTrait
 
 }

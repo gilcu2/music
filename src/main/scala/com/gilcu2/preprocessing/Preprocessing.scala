@@ -17,6 +17,8 @@ object Preprocessing {
   val dayOfWeek = "Day_of_Week"
   val ageVehicle = "Age_of_Vehicle"
   val vehicleTypeField = "Vehicle_Type"
+  val locationX = "Location_Easting_OSGR"
+  val locationY = "Location_Northing_OSGR"
 
   def joinVehiclesWithCasualties(vehicles: DataFrame, casualties: DataFrame): DataFrame = {
 

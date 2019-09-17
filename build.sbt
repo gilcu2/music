@@ -19,6 +19,7 @@ libraryDependencies ++= Seq(
 
   "org.apache.spark" %% "spark-core" % sparkV % "provided",
   "org.apache.spark" %% "spark-sql" % sparkV % "provided",
+  "org.apache.spark" %% "spark-graphx" % sparkV % "provided",
 
 
   "com.typesafe" % "config" % "1.3.4",

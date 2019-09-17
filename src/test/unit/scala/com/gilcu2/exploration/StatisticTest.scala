@@ -56,7 +56,7 @@ class StatisticTest extends FlatSpec with Matchers with GivenWhenThen with Spark
 
   it should "compute the relative frequency with respect to a target value" in {
 
-    Given("the dataframe join of accident and vehicles ")
+    Given("the dataframe join of accident and vehicles")
     val accidents = loadCSVFromLineSeq(accidentLines)
     val vehicles = loadCSVFromLineSeq(vehicleLines)
     val accidentVehicles = Preprocessing.joinAccidentWithVehicles(accidents, vehicles)
