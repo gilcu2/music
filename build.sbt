@@ -11,16 +11,18 @@ configs(IntegrationTestConfig, AcceptanceTestConfig, TestAll)
 
 version := "0.1"
 
+//scalaVersion := "2.12.10"
 scalaVersion := "2.11.12"
 
 val sparkV = "2.4.4"
 
 libraryDependencies ++= Seq(
 
-  "org.apache.spark" %% "spark-core" % sparkV % "provided",
-  "org.apache.spark" %% "spark-sql" % sparkV % "provided",
-  "org.apache.spark" %% "spark-graphx" % sparkV % "provided",
+  "org.apache.spark" %% "spark-core" % sparkV,
+  "org.apache.spark" %% "spark-sql" % sparkV,
+  "org.apache.spark" %% "spark-graphx" % sparkV,
 
+  "io.github.pityka" %% "nspl-awt" % "0.0.19",
 
   "com.typesafe" % "config" % "1.3.4",
 
@@ -33,7 +35,7 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.8" % "test"
 )
 
-mainClass in(Compile, run) := Some("com.gilcu2.ExplorationMain")
+mainClass in(Compile, run) := Some("com.gilcu2.TrafficMain")
 
 test in assembly := {}
 

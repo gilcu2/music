@@ -12,6 +12,8 @@ trait LineArgumentValuesTrait
 
 trait MainTrait extends LazyLogging {
 
+  val appName = "SparkApp"
+
   def getConfigValues(conf: Config): ConfigValuesTrait
 
   def getLineArgumentsValues(args: Array[String], configValues: ConfigValuesTrait): LineArgumentValuesTrait
@@ -27,8 +29,10 @@ trait MainTrait extends LazyLogging {
     logger.info(s"Arguments: $args")
 
     implicit val conf = ConfigFactory.load
-    val sparkConf = new SparkConf().setAppName("Exploration")
-    implicit val spark = Spark.sparkSession(sparkConf)
+    implicit val spark = SparkSession.builder
+      .appName(appName)
+      .master("local[*]")
+      .getOrCreate
 
     println(s"Begin: $beginTime Machine: ${OS.getHostname} Cores: ${Spark.getTotalCores}")
 

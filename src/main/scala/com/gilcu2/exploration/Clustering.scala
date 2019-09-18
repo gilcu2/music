@@ -12,7 +12,7 @@ case class Cluster(id: Long, coordinates: Seq[CoordinateCount])
 
 object Clustering {
 
-  def findHotSpots(accidents: DataFrame, severity: Int, minimunAccidents: Int, maxIterations: Int = 10)(implicit spark: SparkSession): RDD[Cluster] = {
+  def findHotSpots(accidents: DataFrame, severity: Int, minimumAccidents: Int, minimumDistance: Int, maxIterations: Int = 10)(implicit spark: SparkSession): RDD[Cluster] = {
     import spark.implicits._
 
     val filtered = accidents
@@ -33,13 +33,14 @@ object Clustering {
       .withColumnRenamed("sum(count)", "count")
       .withColumn("id", monotonically_increasing_id())
       .as[CoordinateCount]
-      .filter(_.count >= minimunAccidents)
+      .filter(_.count >= minimumAccidents)
       .cache()
 
+    println("Accidents per point sample")
     groupedByCoordinate.show()
 
     val conditionUDF = udf[Boolean, Long, Long, Long, Long]((x1, y1, x2, y2) =>
-      (x1 < x2 && math.abs(x1 - x2) < 2) || (y1 < y2 && math.abs(y1 - y2) < 2)
+      (x1 < x2 && math.abs(x1 - x2) < minimumDistance) || (y1 < y2 && math.abs(y1 - y2) < minimumDistance)
     )
 
     val leftDS = groupedByCoordinate
@@ -53,6 +54,7 @@ object Clustering {
       .join(rightDS, conditionUDF(leftDS("x"), leftDS("y"), rightDS("x1"), rightDS("y1")),
         "cross")
 
+    println("Near points sample")
     edgesJoin.show()
 
     val edges = edgesJoin
