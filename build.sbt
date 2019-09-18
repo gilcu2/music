@@ -2,7 +2,7 @@ import AcceptanceTest._
 import IntegrationTest._
 import UnitTest._
 
-name := "traffic-cwt"
+name := "music"
 organization := "com.gilcu2"
 
 UnitTestSettings ++ IntegrationTestSettings ++ AcceptanceTestSettings
@@ -35,11 +35,11 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.8" % "test"
 )
 
-mainClass in(Compile, run) := Some("com.gilcu2.TrafficMain")
+mainClass in(Compile, run) := Some("com.gilcu2.MusicMain")
 
 test in assembly := {}
 
-assemblyJarName in assembly := "TrafficAccidents.jar"
+assemblyJarName in assembly := "Music.jar"
 
 assemblyMergeStrategy in assembly := {
   //  case PathList("org", "apache", "spark", "unused", "UnusedStubClass.class") => MergeStrategy.first
