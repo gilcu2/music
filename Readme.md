@@ -12,7 +12,7 @@ and unzip it in data directory
 
 1. Create jar: sbt assembly
 
-1. Go to scripts dir and run traffic.sh. Options:
+1. Run scripts/traffic.sh. Options:
 
    1. -o Domain of all features 
    
