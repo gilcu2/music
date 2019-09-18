@@ -2,7 +2,7 @@
 
 MASTER="local[8]"
 CONFIGPATH="."
-PROGRAM="../target/scala-2.11/TrafficAccidents.jar"
+PROGRAM="target/scala-2.11/TrafficAccidents.jar"
 MAIN=com.gilcu2.TrafficMain
 OUT=traffic.out
 ERR=traffic.err
