@@ -1,6 +1,7 @@
 package com.gilcu2.processing
 
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.{Column, DataFrame, SparkSession}
+import org.apache.spark.sql.functions._
 
 object Processing {
 
@@ -22,6 +23,16 @@ object Processing {
       .withColumnRenamed("_c4", songIdField)
       .withColumnRenamed("_c5", songName)
 
+  def getSessions(userTracks:Column):Column=
+    size(userTracks)
+
+  def computeLongestSessions(tracks: DataFrame, sessions: Int)(implicit spark: SparkSession): DataFrame = {
+    import spark.implicits._
+    tracks
+      .groupBy(userIdField)
+      .agg(sort_array(collect_list(timeField)).as("user_tracks"))
+      .select(col(userIdField),getSessions($"user_tracks"))
+  }
 
   def computeTopFromLongestSessions(tracks: DataFrame, top: Int, sessions: Int)(implicit spark: SparkSession): DataFrame = {
     spark.emptyDataFrame

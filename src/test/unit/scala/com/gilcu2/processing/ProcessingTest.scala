@@ -24,6 +24,22 @@ class ProcessingTest extends FlatSpec with Matchers with GivenWhenThen with Spar
 
   }
 
+  it should "find the longest sessions" in {
+
+    Given("the tracks dataframe")
+    val originalTracks=loadCSVFromLineSeq(trackLines,delimiter = "\t",header = false).cache()
+    val tracks=Processing.prepareData(originalTracks)
+
+    When("compute the longest session")
+    val sessions=Processing.computeLongestSessions(tracks,2)
+    sessions.show()
+
+
+    Then("then sessions must be the expected")
+    sessions.count shouldBe 2
+
+  }
+
   it should "compute the most reproduces songs from the longest session" in {
 
     Given("the tracks files")
@@ -46,11 +62,11 @@ object DataSample {
       |user_000001	2009-05-04T13:23:45Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	坂本龍一      		Glacier (Live_2009_4_15)
       |user_000001	2009-05-04T13:19:22Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	坂本龍一      		Parolibre (Live_2009_4_15)
       |user_000001	2009-05-04T13:13:38Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	坂本龍一      		Bibo No Aozora (Live_2009_4_15)
-      |user_000001	2009-05-04T13:06:09Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	坂本龍一      		The Last Emperor (Theme)
-      |user_000001	2009-05-04T13:00:48Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	坂本龍一      		Happyend (Live_2009_4_15)
-      |user_000001	2009-05-04T12:55:34Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	坂本龍一      		Tibetan Dance (Version)
+      |user_000002	2009-05-04T13:06:09Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	坂本龍一      		The Last Emperor (Theme)
+      |user_000002	2009-05-04T13:00:48Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	坂本龍一      		Happyend (Live_2009_4_15)
+      |user_000002	2009-05-04T12:55:34Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	坂本龍一      		Tibetan Dance (Version)
       |user_000001	2009-05-04T12:51:26Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	坂本龍一      		Behind The Mask (Live_2009_4_15)
-      |user_000001	2009-05-03T15:48:25Z	ba2f4f3b-0293-4bc8-bb94-2f73b5207343	Underworld	  	Boy, Boy, Boy (Switch Remix)
+      |user_000002	2009-05-03T15:48:25Z	ba2f4f3b-0293-4bc8-bb94-2f73b5207343	Underworld	  	Boy, Boy, Boy (Switch Remix)
       |user_000001	2009-05-03T15:37:56Z	ba2f4f3b-0293-4bc8-bb94-2f73b5207343	Underworld	  	Crocodile (Innervisions Orchestra Mix)
       |""".cleanLines
 
