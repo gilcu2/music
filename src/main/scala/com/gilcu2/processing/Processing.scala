@@ -2,7 +2,7 @@ package com.gilcu2.processing
 
 import org.apache.spark.sql.execution.streaming.FileStreamSource.Timestamp
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.TimestampType
+import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 
 object Processing {
@@ -30,9 +30,12 @@ object Processing {
 
   def computeLongestSessions(tracks: DataFrame, sessions: Int)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._
+
     val zipper=udf[Seq[(Timestamp,String,String)],Seq[Timestamp],Seq[String],Seq[String]]((times, artists, songs)=>{
       times.zip(artists).zip(songs).map(t=>(t._1._1,t._1._2,t._2))
     })
+
+    tracks.printSchema()
 
     val userTracks = tracks
       .groupBy(userIdField)
@@ -41,17 +44,18 @@ object Processing {
         collect_list(artistNameField).as(artistNames),
         collect_list(songNameField).as(songNames)
       )
-//      .withColumn("userTracks", zipper(col(timeField),col(artistNameField), col(songNameField)))
-    //      .agg(sort_array(collect_list(concat(col(timeField),col(artistNameField),col(songName)))).as("user_tracks"))
+      .withColumn("userTracks", zipper(col(timeStamps),col(artistNames), col(songNames)))
+//          .agg(sort_array(collect_list(concat(col(timeField),col(artistNameField),col(songName)))).as("user_tracks"))
     userTracks.printSchema()
     userTracks.show(20, truncate = 80, vertical = true)
 
-    userTracks.select(col(userIdField), getSessions($"user_tracks"))
+//    userTracks.select(col(userIdField), )
+    userTracks
   }
 
-  def getSessions(userTracks: Column): Column = {
+  def getSessions(timestamps: Column,artistNames:Column,songNames:Column): Column = {
 
-    val len = size(userTracks)
+    val len = size(timestamps)
     len
   }
 
