@@ -45,6 +45,33 @@ class ProcessingTest extends FlatSpec with Matchers with GivenWhenThen with Spar
     sessions(1).getList(1).size() shouldBe 1
   }
 
+  it should "find the sessions from two users" in {
+
+    Given("the tracks lines with 2 session of the same user")
+    val trackLines =
+      """
+        |user_000001	2009-05-04T13:08:57Z	f1b1cf71-bd35-4e99-8624-24a6e15f133a	artist1	idsong1	song1
+        |user_000002	2009-05-04T13:14:10Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist2	idsong2	song2
+        |user_000001	2009-05-04T13:27:04Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist3	idsong3	song3
+        |user_000002	2009-05-04T13:33:57Z	f1b1cf71-bd35-4e99-8624-24a6e15f133a	artist1	idsong1	song1
+        |user_000002	2009-05-04T13:40:10Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist2	idsong2	song2
+        |user_000001	2009-05-04T13:45:04Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist3	idsong3	song3
+    """.cleanLines
+    val originalTracks = loadCSVFromLineSeq(trackLines, delimiter = "\t", header = false).cache()
+    val tracks = Processing.prepareData(originalTracks)
+
+    When("compute the sessions")
+    val sessions = Processing.computeUserSessions(tracks)
+
+    sessions.printSchema()
+    sessions.show(20, truncate = 120, vertical = true)
+
+    Then("then sessions must be the expected")
+    sessions.count shouldBe 2
+    sessions.collect.map(_.getString(0)).toSet shouldBe Set("user_000001", "user_000002")
+  }
+
+
   it should "compute the most reproduces songs from the longest session" in {
 
     Given("the tracks files")

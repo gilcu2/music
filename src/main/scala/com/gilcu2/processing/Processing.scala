@@ -71,11 +71,7 @@ object Processing {
       )
       .withColumn(userTracksField, computeUserSessions(col(timeStampsField),
         col(artistNamesField), col(songNamesField)))
-      .select(col(userIdField), explode(col(userTracksField)))
-
-
-    userSessions.printSchema()
-    userSessions.show(20, truncate = 120, vertical = true)
+      .select(col(userIdField), explode(col(userTracksField)).as(userSessionsField))
 
     userSessions
   }
