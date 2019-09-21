@@ -11,9 +11,9 @@ object Spark {
       .config(sparkConf)
       .getOrCreate()
 
-  def loadCSVFromFile(path: String, delimiter: String = ",", header: Boolean = true)(implicit sparkSession: SparkSession): DataFrame = {
-    val lines = readTextFile(path + ".csv")
-    loadCSVFromLineDS(lines)
+  def loadCSVFromFile(path: String, delimiter: String = ",", header: Boolean = true, ext: String = ".csv")(implicit sparkSession: SparkSession): DataFrame = {
+    val lines = readTextFile(path + ext)
+    loadCSVFromLineDS(lines, delimiter, header)
   }
 
   def readTextFile(path: String)(implicit spark: SparkSession): Dataset[String] =
@@ -33,6 +33,13 @@ object Spark {
 
     loadCSVFromLineDS(spark.createDataset(lines), delimiter, header)
   }
+
+  def saveCSVToFile(df: DataFrame, path: String, delimiter: String = ",",
+                    header: Boolean = true, ext: String = ".csv"): Unit =
+    df.write
+      .option("header", header)
+      .option("delimiter", delimiter)
+      .csv(path + ext)
 
   def getTotalCores(implicit spark: SparkSession): Int = {
     //    val executors = spark.sparkContext.statusTracker.getExecutorInfos

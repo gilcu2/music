@@ -4,6 +4,7 @@ import com.gilcu2.interfaces._
 import com.typesafe.config.Config
 import org.apache.spark.sql.SparkSession
 import org.rogach.scallop.ScallopConf
+import com.gilcu2.processing.Processing
 
 object MusicMain extends MainTrait {
 
@@ -15,18 +16,20 @@ object MusicMain extends MainTrait {
     val config = configValues.asInstanceOf[Configuration]
     val arguments = lineArguments.asInstanceOf[Arguments]
 
-    val tracks = Spark.loadCSVFromFile(config.trackPath, delimiter = "\t",header=false)
+    val tracks = Spark.loadCSVFromFile(config.trackPath, delimiter = "\t", header = false, ext = ".tsv")
 
-//    val results=computeTopFromLongestSessions(tracks,arguments.top,arguments.sessions)
+    val results = Processing.computeTopSongFromLongestSessions(tracks, arguments.sessions, arguments.top)
+
+    Spark.saveCSVToFile(results, config.topSongPath, delimiter = "\t", ext = ".tsv")
 
   }
 
   override def getConfigValues(conf: Config): Configuration = {
     val dataPath = conf.getString("DataDir")
-    val trackFilename = conf.getString("musicTrack")
+    val trackPath = dataPath + "/" + conf.getString("musicTrack")
+    val topSongsPath = dataPath + "/" + conf.getString("topSongs")
 
-
-    Configuration(dataPath + "/" + trackFilename)
+    Configuration(trackPath, topSongsPath)
   }
 
   override def getLineArgumentsValues(args: Array[String], configValues: ConfigValuesTrait): Arguments = {
@@ -40,7 +43,7 @@ object MusicMain extends MainTrait {
     Arguments(top, sessions)
   }
 
-  case class Configuration(trackPath: String) extends ConfigValuesTrait
+  case class Configuration(trackPath: String, topSongPath: String) extends ConfigValuesTrait
 
   class CommandLineParameterConf(arguments: Seq[String]) extends ScallopConf(arguments) {
     val top = opt[Int](short = 't', default = Some(10))

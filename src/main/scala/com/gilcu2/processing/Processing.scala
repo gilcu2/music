@@ -6,6 +6,13 @@ import java.sql.Timestamp
 
 object Processing {
 
+  def computeTopSongFromLongestSessions(df: DataFrame, nSessions: Int, nSongs: Int): DataFrame = {
+    val tracks = Processing.prepareData(df)
+    val sessions = Processing.computeSessions(tracks)
+    val longestSessions = Processing.computeLongestSessions(sessions, nSessions)
+    computeTopSongs(longestSessions, nSongs)
+  }
+
   val userIdField = "userId"
   val timeField = "timeStamp"
   val artistIdField = "artistId"
@@ -16,7 +23,9 @@ object Processing {
   val artistNamesField = "artistNames"
   val songNamesField = "songNames"
   val userTracksField = "userTracks"
-  val userSessionsField = "userSessions"
+  val sessionField = "Session"
+  val lenField = "len"
+  val countField = "count"
 
   val fields = Array(userIdField, timeField, artistIdField, artistNameField, songIdField, songNameField)
 
@@ -24,7 +33,7 @@ object Processing {
     def compare(x: Timestamp, y: Timestamp): Int = x compareTo y
   }
 
-  def prepareData(df: DataFrame)(implicit spark: SparkSession): DataFrame =
+  def prepareData(df: DataFrame): DataFrame =
     df
       .withColumn(userIdField, trim(col("_c0")))
       .withColumn(timeField, trim(col("_c1")))
@@ -58,7 +67,7 @@ object Processing {
     })
 
 
-  def computeUserSessions(tracks: DataFrame)(implicit spark: SparkSession): DataFrame = {
+  def computeSessions(tracks: DataFrame): DataFrame = {
 
     tracks.printSchema()
 
@@ -71,15 +80,27 @@ object Processing {
       )
       .withColumn(userTracksField, computeUserSessions(col(timeStampsField),
         col(artistNamesField), col(songNamesField)))
-      .select(col(userIdField), explode(col(userTracksField)).as(userSessionsField))
+      .select(col(userIdField), explode(col(userTracksField)).as(sessionField))
 
     userSessions
   }
 
+  def computeLongestSessions(sessions: DataFrame, n: Int): DataFrame =
+    sessions
+      .withColumn(lenField, size(col(sessionField)))
+      .orderBy(desc(lenField))
+      .limit(n)
 
+  def computeTopSongs(sessions: DataFrame, n: Int): DataFrame = {
+    val exploding = sessions.select(sessionField)
+      .select(explode(col(sessionField)))
+      .select(col("col._2").as(artistNameField), col("col._3").as(songNameField))
 
-  def computeTopFromLongestSessions(tracks: DataFrame, top: Int, sessions: Int)(implicit spark: SparkSession): DataFrame = {
-    spark.emptyDataFrame
+    exploding.select(artistNameField, songNameField)
+      .groupBy(artistNameField, songNameField)
+      .count().as(countField)
+      .sort(desc(countField))
+      .limit(n)
   }
 
 }

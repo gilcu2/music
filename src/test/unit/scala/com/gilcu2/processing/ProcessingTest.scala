@@ -37,7 +37,7 @@ class ProcessingTest extends FlatSpec with Matchers with GivenWhenThen with Spar
     val tracks=Processing.prepareData(originalTracks)
 
     When("compute the sessions")
-    val sessions = Processing.computeUserSessions(tracks).collect()
+    val sessions = Processing.computeSessions(tracks).collect()
 
     Then("then sessions must be the expected")
     sessions.size shouldBe 2
@@ -61,22 +61,71 @@ class ProcessingTest extends FlatSpec with Matchers with GivenWhenThen with Spar
     val tracks = Processing.prepareData(originalTracks)
 
     When("compute the sessions")
-    val sessions = Processing.computeUserSessions(tracks)
-
-    sessions.printSchema()
-    sessions.show(20, truncate = 120, vertical = true)
+    val sessions = Processing.computeSessions(tracks)
 
     Then("then sessions must be the expected")
     sessions.count shouldBe 2
     sessions.collect.map(_.getString(0)).toSet shouldBe Set("user_000001", "user_000002")
   }
 
+  it should "return the longest sessions" in {
 
-  it should "compute the most reproduces songs from the longest session" in {
+    Given("the tracks lines with 4 session of two users")
+    val trackLines =
+      """
+        |user_000001	2009-05-04T13:08:57Z	f1b1cf71-bd35-4e99-8624-24a6e15f133a	artist1	idsong1	song1
+        |user_000002	2009-05-04T13:14:10Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist2	idsong2	song2
+        |user_000001	2009-05-04T13:27:04Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist3	idsong3	song3
+        |user_000002	2009-05-04T13:33:57Z	f1b1cf71-bd35-4e99-8624-24a6e15f133a	artist1	idsong1	song1
+        |user_000002	2009-05-04T13:40:10Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist2	idsong2	song2
+        |user_000001	2009-05-04T13:45:04Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist3	idsong3	song3
+        |user_000002	2009-05-04T14:33:57Z	f1b1cf71-bd35-4e99-8624-24a6e15f133a	artist1	idsong1	song1
+        |user_000002	2009-05-04T14:40:10Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist2	idsong2	song2
+        |user_000001	2009-05-04T14:45:04Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist3	idsong3	song3
+    """.cleanLines
+    val originalTracks = loadCSVFromLineSeq(trackLines, delimiter = "\t", header = false).cache()
+    val tracks = Processing.prepareData(originalTracks)
+    val sessions = Processing.computeSessions(tracks)
 
-    Given("the tracks files")
+    When("compute the longest sessions")
+    val longestSessions = Processing.computeLongestSessions(sessions, 3)
 
+    Then("then sessions must be the expected")
+    longestSessions.count shouldBe 3
+    longestSessions.collect.map(_.getString(0)).sorted shouldBe Seq("user_000001", "user_000002", "user_000002")
   }
+
+
+  it should "compute the 2 most reproduces songs from the longest session" in {
+
+    Given("the tracks lines with 2 session of the same user")
+    val trackLines =
+      """
+        |user_000001	2009-05-04T13:08:57Z	f1b1cf71-bd35-4e99-8624-24a6e15f133a	artist1	idsong1	song1
+        |user_000002	2009-05-04T13:14:10Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist2	idsong2	song2
+        |user_000001	2009-05-04T13:27:04Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist3	idsong3	song3
+        |user_000002	2009-05-04T13:33:57Z	f1b1cf71-bd35-4e99-8624-24a6e15f133a	artist1	idsong1	song1
+        |user_000002	2009-05-04T13:40:10Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist2	idsong2	song2
+        |user_000001	2009-05-04T13:45:04Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist3	idsong3	song3
+        |user_000002	2009-05-04T14:33:57Z	f1b1cf71-bd35-4e99-8624-24a6e15f133a	artist1	idsong1	song1
+        |user_000002	2009-05-04T14:40:10Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist2	idsong2	song2
+        |user_000001	2009-05-04T14:45:04Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist3	idsong3	song3
+    """.cleanLines
+    val originalTracks = loadCSVFromLineSeq(trackLines, delimiter = "\t", header = false).cache()
+    val tracks = Processing.prepareData(originalTracks)
+    val sessions = Processing.computeSessions(tracks)
+    val longestSessions = Processing.computeLongestSessions(sessions, 3)
+
+    When("compute the 2 top sons")
+    val topSongs = Processing.computeTopSongs(longestSessions, 2)
+
+    topSongs.printSchema()
+    topSongs.show(20, truncate = 120, vertical = true)
+
+    Then("then top song must be the expected")
+    topSongs.collect.map(r => (r.getString(0), r.getString(1))).toSet shouldBe Set(("artist1", "song1"), ("artist2", "song2"))
+  }
+
 
 }
 
