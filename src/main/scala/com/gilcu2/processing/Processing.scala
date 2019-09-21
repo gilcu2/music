@@ -1,9 +1,8 @@
 package com.gilcu2.processing
 
-import org.apache.spark.sql.execution.streaming.FileStreamSource.Timestamp
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Column, DataFrame, SparkSession}
+import java.sql.Timestamp
 
 object Processing {
 
@@ -13,47 +12,84 @@ object Processing {
   val artistNameField = "artistName"
   val songIdField = "songId"
   val songNameField = "songName"
-  val timeStamps="timeStamps"
-  val artistNames="artistNames"
-  val songNames="songNames"
+  val timeStampsField = "timeStamps"
+  val artistNamesField = "artistNames"
+  val songNamesField = "songNames"
+  val userTracksField = "userTracks"
+  val userSessionsField = "userSessions"
 
   val fields = Array(userIdField, timeField, artistIdField, artistNameField, songIdField, songNameField)
 
+  implicit def ordered: Ordering[Timestamp] = new Ordering[Timestamp] {
+    def compare(x: Timestamp, y: Timestamp): Int = x compareTo y
+  }
+
   def prepareData(df: DataFrame)(implicit spark: SparkSession): DataFrame =
     df
-      .withColumnRenamed("_c0", userIdField)
-      .withColumnRenamed("_c1", timeField)
-      .withColumnRenamed("_c2", artistIdField)
-      .withColumnRenamed("_c3", artistNameField)
-      .withColumnRenamed("_c4", songIdField)
-      .withColumnRenamed("_c5", songNameField)
+      .withColumn(userIdField, trim(col("_c0")))
+      .withColumn(timeField, trim(col("_c1")))
+      .withColumn(artistIdField, trim(col("_c2")))
+      .withColumn(artistNameField, trim(col("_c3")))
+      .withColumn(songIdField, trim(col("_c4")))
+      .withColumn(songNameField, trim(col("_c5")))
+      .select(userIdField, timeField, artistIdField, artistNameField, songIdField, songNameField)
+
+  val zipperAndSort = udf[Seq[(Timestamp, String, String)], Seq[Timestamp], Seq[String], Seq[String]](
+    (times, artists, songs) => {
+      times.zip(artists).zip(songs).map(t => (t._1._1, t._1._2, t._2))
+        .sortBy(_._1)
+    })
+
+  val computeSessions = udf[Seq[Seq[(Timestamp, String, String)]], Seq[(Timestamp, String, String)]](
+    tracks => {
+      val sessions = scala.collection.mutable.ListBuffer[Seq[(Timestamp, String, String)]]()
+      var session = scala.collection.mutable.ListBuffer(tracks.head)
+      var lastMinutes = tracks.head._1.getTime / 60000
+      tracks.tail.foreach { case (time, artist, song) => {
+        val minutes = time.getTime / 60000
+        if (minutes - lastMinutes < 20)
+          session.append((time, artist, song))
+        else {
+          sessions.append(session)
+          session = scala.collection.mutable.ListBuffer((time, artist, song))
+        }
+        lastMinutes = minutes
+      }
+      }
+      sessions
+    })
+
 
   def computeLongestSessions(tracks: DataFrame, sessions: Int)(implicit spark: SparkSession): DataFrame = {
-    import spark.implicits._
-
-    val zipper=udf[Seq[(Timestamp,String,String)],Seq[Timestamp],Seq[String],Seq[String]]((times, artists, songs)=>{
-      times.zip(artists).zip(songs).map(t=>(t._1._1,t._1._2,t._2))
-    })
 
     tracks.printSchema()
 
     val userTracks = tracks
       .groupBy(userIdField)
       .agg(
-        collect_list(timeField).as(timeStamps),
-        collect_list(artistNameField).as(artistNames),
-        collect_list(songNameField).as(songNames)
+        collect_list(timeField).as(timeStampsField),
+        collect_list(artistNameField).as(artistNamesField),
+        collect_list(songNameField).as(songNamesField)
       )
-      .withColumn("userTracks", zipper(col(timeStamps),col(artistNames), col(songNames)))
-//          .agg(sort_array(collect_list(concat(col(timeField),col(artistNameField),col(songName)))).as("user_tracks"))
-    userTracks.printSchema()
-    userTracks.show(20, truncate = 80, vertical = true)
+      .withColumn(userTracksField, zipperAndSort(col(timeStampsField),
+        col(artistNamesField), col(songNamesField)))
+      .select(col(userIdField), col(userTracksField))
 
-//    userTracks.select(col(userIdField), )
+
+    userTracks.printSchema()
+    userTracks.show(20, truncate = 120, vertical = true)
+
+    val userSessions = userTracks
+      .withColumn(userSessionsField, computeSessions(col(userTracksField)))
+      .select(col(userIdField), col(userSessionsField))
+
+    userSessions.printSchema()
+    userSessions.show(20, truncate = 120, vertical = true)
+
     userTracks
   }
 
-  def getSessions(timestamps: Column,artistNames:Column,songNames:Column): Column = {
+  def getSessions(timestamps: Column, artistNames: Column, songNames: Column): Column = {
 
     val len = size(timestamps)
     len
