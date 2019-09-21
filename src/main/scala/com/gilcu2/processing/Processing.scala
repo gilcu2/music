@@ -1,7 +1,7 @@
 package com.gilcu2.processing
 
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.{Column, DataFrame, SparkSession}
+import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import java.sql.Timestamp
 
 object Processing {
@@ -34,66 +34,53 @@ object Processing {
       .withColumn(songNameField, trim(col("_c5")))
       .select(userIdField, timeField, artistIdField, artistNameField, songIdField, songNameField)
 
-  val zipperAndSort = udf[Seq[(Timestamp, String, String)], Seq[Timestamp], Seq[String], Seq[String]](
+  val computeUserSessions = udf[Seq[Seq[(Timestamp, String, String)]], Seq[Timestamp], Seq[String], Seq[String]](
     (times, artists, songs) => {
-      times.zip(artists).zip(songs).map(t => (t._1._1, t._1._2, t._2))
+      val joinedSorted = times.zip(artists).zip(songs).map(t => (t._1._1, t._1._2, t._2))
         .sortBy(_._1)
-    })
 
-  val computeSessions = udf[Seq[Seq[(Timestamp, String, String)]], Seq[(Timestamp, String, String)]](
-    tracks => {
       val sessions = scala.collection.mutable.ListBuffer[Seq[(Timestamp, String, String)]]()
-      var session = scala.collection.mutable.ListBuffer(tracks.head)
-      var lastMinutes = tracks.head._1.getTime / 60000
-      tracks.tail.foreach { case (time, artist, song) => {
-        val minutes = time.getTime / 60000
+      var session = scala.collection.mutable.ListBuffer[(Timestamp, String, String)]()
+      session.append(joinedSorted.head)
+      var lastMinutes = joinedSorted.head._1.getTime / 60000
+      joinedSorted.tail.foreach(t => {
+        val minutes = t._1.getTime / 60000
         if (minutes - lastMinutes < 20)
-          session.append((time, artist, song))
+          session.append(t)
         else {
           sessions.append(session)
-          session = scala.collection.mutable.ListBuffer((time, artist, song))
+          session = scala.collection.mutable.ListBuffer(t)
         }
         lastMinutes = minutes
-      }
-      }
+      })
+      sessions.append(session)
       sessions
     })
 
 
-  def computeLongestSessions(tracks: DataFrame, sessions: Int)(implicit spark: SparkSession): DataFrame = {
+  def computeUserSessions(tracks: DataFrame)(implicit spark: SparkSession): DataFrame = {
 
     tracks.printSchema()
 
-    val userTracks = tracks
+    val userSessions = tracks
       .groupBy(userIdField)
       .agg(
         collect_list(timeField).as(timeStampsField),
         collect_list(artistNameField).as(artistNamesField),
         collect_list(songNameField).as(songNamesField)
       )
-      .withColumn(userTracksField, zipperAndSort(col(timeStampsField),
+      .withColumn(userTracksField, computeUserSessions(col(timeStampsField),
         col(artistNamesField), col(songNamesField)))
-      .select(col(userIdField), col(userTracksField))
+      .select(col(userIdField), explode(col(userTracksField)))
 
-
-    userTracks.printSchema()
-    userTracks.show(20, truncate = 120, vertical = true)
-
-    val userSessions = userTracks
-      .withColumn(userSessionsField, computeSessions(col(userTracksField)))
-      .select(col(userIdField), col(userSessionsField))
 
     userSessions.printSchema()
     userSessions.show(20, truncate = 120, vertical = true)
 
-    userTracks
+    userSessions
   }
 
-  def getSessions(timestamps: Column, artistNames: Column, songNames: Column): Column = {
 
-    val len = size(timestamps)
-    len
-  }
 
   def computeTopFromLongestSessions(tracks: DataFrame, top: Int, sessions: Int)(implicit spark: SparkSession): DataFrame = {
     spark.emptyDataFrame

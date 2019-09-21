@@ -24,20 +24,25 @@ class ProcessingTest extends FlatSpec with Matchers with GivenWhenThen with Spar
 
   }
 
-  it should "find the longest sessions" in {
+  it should "find the two user sessions from the same user" in {
 
-    Given("the tracks dataframe")
+    Given("the tracks lines with 2 session of the same user")
+    val trackLines =
+      """
+        |user_000001	2009-05-04T13:08:57Z	f1b1cf71-bd35-4e99-8624-24a6e15f133a	artist1	idsong1	song1
+        |user_000001	2009-05-04T13:14:10Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist2	idsong2	song2
+        |user_000001	2009-05-04T13:52:04Z	a7f7df4a-77d8-4f12-8acd-5c60c93f4de8	artist3	idsong3	song3
+    """.cleanLines
     val originalTracks=loadCSVFromLineSeq(trackLines,delimiter = "\t",header = false).cache()
     val tracks=Processing.prepareData(originalTracks)
 
-    When("compute the longest session")
-    val sessions=Processing.computeLongestSessions(tracks,2)
-    sessions.show()
-
+    When("compute the sessions")
+    val sessions = Processing.computeUserSessions(tracks).collect()
 
     Then("then sessions must be the expected")
-    sessions.count shouldBe 2
-
+    sessions.size shouldBe 2
+    sessions(0).getList(1).size() shouldBe 2
+    sessions(1).getList(1).size() shouldBe 1
   }
 
   it should "compute the most reproduces songs from the longest session" in {
