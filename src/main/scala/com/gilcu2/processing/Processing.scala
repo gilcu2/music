@@ -7,9 +7,9 @@ import java.sql.Timestamp
 object Processing {
 
   def computeTopSongFromLongestSessions(df: DataFrame, nSessions: Int, nSongs: Int): DataFrame = {
-    val tracks = Processing.prepareData(df)
-    val sessions = Processing.computeSessions(tracks)
-    val longestSessions = Processing.computeLongestSessions(sessions, nSessions)
+    val tracks = prepareData(df)
+    val sessions = computeSessions(tracks)
+    val longestSessions = computeLongestSessions(sessions, nSessions)
     computeTopSongs(longestSessions, nSongs)
   }
 
@@ -67,11 +67,8 @@ object Processing {
     })
 
 
-  def computeSessions(tracks: DataFrame): DataFrame = {
-
-    tracks.printSchema()
-
-    val userSessions = tracks
+  def computeSessions(tracks: DataFrame): DataFrame =
+    tracks
       .groupBy(userIdField)
       .agg(
         collect_list(timeField).as(timeStampsField),
@@ -82,8 +79,6 @@ object Processing {
         col(artistNamesField), col(songNamesField)))
       .select(col(userIdField), explode(col(userTracksField)).as(sessionField))
 
-    userSessions
-  }
 
   def computeLongestSessions(sessions: DataFrame, n: Int): DataFrame =
     sessions

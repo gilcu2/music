@@ -18,9 +18,14 @@ object MusicMain extends MainTrait {
 
     val tracks = Spark.loadCSVFromFile(config.trackPath, delimiter = "\t", header = false, ext = ".tsv")
 
-    val results = Processing.computeTopSongFromLongestSessions(tracks, arguments.sessions, arguments.top)
+    val trackLimited = if (arguments.limitRows > 0) {
+      logger.info(s"Taking first ${arguments.limitRows} rows")
+      tracks.limit(arguments.limitRows)
+    } else tracks
 
-    Spark.saveCSVToFile(results, config.topSongPath, delimiter = "\t", ext = ".tsv")
+    val results = Processing.computeTopSongFromLongestSessions(tracks, arguments.numberOfBiggestSessions, arguments.topNumberOfSongs)
+
+    Spark.saveToCSVFile(results, config.topSongPath, delimiter = "\t", ext = ".tsv", oneFile = true)
 
   }
 
@@ -39,8 +44,9 @@ object MusicMain extends MainTrait {
 
     val top = parsedArgs.top()
     val sessions = parsedArgs.sessions()
+    val limit = parsedArgs.limit()
 
-    Arguments(top, sessions)
+    Arguments(top, sessions, limit)
   }
 
   case class Configuration(trackPath: String, topSongPath: String) extends ConfigValuesTrait
@@ -48,9 +54,10 @@ object MusicMain extends MainTrait {
   class CommandLineParameterConf(arguments: Seq[String]) extends ScallopConf(arguments) {
     val top = opt[Int](short = 't', default = Some(10))
     val sessions = opt[Int](short = 's', default = Some(50))
+    val limit = opt[Int](short = 'l', default = Some(0))
   }
 
-  case class Arguments(top: Int, sessions: Int)
+  case class Arguments(topNumberOfSongs: Int, numberOfBiggestSessions: Int, limitRows: Int)
     extends LineArgumentValuesTrait
 
 }

@@ -34,12 +34,28 @@ object Spark {
     loadCSVFromLineDS(spark.createDataset(lines), delimiter, header)
   }
 
-  def saveCSVToFile(df: DataFrame, path: String, delimiter: String = ",",
-                    header: Boolean = true, ext: String = ".csv"): Unit =
+  def saveToCSVFile(df: DataFrame, path: String, delimiter: String = ",",
+                    header: Boolean = true, ext: String = ".csv",
+                    deleteOld: Boolean = true, oneFile: Boolean = false): Unit = {
+    val fileName = path + ext
+    val tmpFileName = if (oneFile) path + "_tmp" + ext else fileName
+    if (deleteOld) {
+      HadoopFS.delete(tmpFileName)
+      HadoopFS.delete(fileName)
+    }
+
+    //    val dfOut = if (oneFile) df.coalesce(1) else df
+
     df.write
       .option("header", header)
       .option("delimiter", delimiter)
-      .csv(path + ext)
+      .csv(tmpFileName)
+
+    if (oneFile) {
+      HadoopFS.merge(tmpFileName, fileName)
+      HadoopFS.delete(tmpFileName)
+    }
+  }
 
   def getTotalCores(implicit spark: SparkSession): Int = {
     //    val executors = spark.sparkContext.statusTracker.getExecutorInfos
