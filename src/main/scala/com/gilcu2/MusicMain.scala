@@ -8,7 +8,7 @@ import com.gilcu2.processing.Processing
 
 object MusicMain extends MainTrait {
 
-  override val appName = "Traffic"
+  override val appName = "Music"
 
   override def process(configValues: ConfigValuesTrait, lineArguments: LineArgumentValuesTrait)(
     implicit spark: SparkSession): Unit = {
