@@ -6,6 +6,8 @@ data/ReynaldoTopSongResult.csv
 
 ## Building, test, run
 
+1. git clone https://github.com/gilcu2/music.git
+
 1. Download 
 [spark](https://www.apache.org/dyn/closer.lua/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz)
 , unzip in a dir and add bin subdirectory to your PATH
