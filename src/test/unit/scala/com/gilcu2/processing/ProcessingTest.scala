@@ -126,6 +126,34 @@ class ProcessingTest extends FlatSpec with Matchers with GivenWhenThen with Spar
     topSongs.collect.map(r => (r.getString(0), r.getString(1))).toSet shouldBe Set(("artist1", "song1"), ("artist2", "song2"))
   }
 
+  it should ("compute the number of reproductions per artist") in {
+    Given("the tracks lines with 3 artists")
+    val trackLines =
+      """
+        |user_000001	2009-05-04T13:08:57Z	id1	artist1	idsong1	song1
+        |user_000002	2009-05-04T13:14:10Z	id2	artist2	idsong2	song2
+        |user_000001	2009-05-04T13:27:04Z	id3	artist3	idsong3	song3
+        |user_000002	2009-05-04T13:33:57Z	id1	artist1	idsong1	song1
+        |user_000002	2009-05-04T13:40:10Z	id2	artist2	idsong2	song2
+        |user_000001	2009-05-04T13:45:04Z	id3	artist3	idsong3	song3
+        |user_000002	2009-05-04T14:33:57Z	id1	artist1	idsong1	song1
+        |user_000002	2009-05-04T14:40:10Z	id2	artist2	idsong2	song2
+        |user_000001	2009-05-04T14:45:04Z	id3	artist3	idsong3	song3
+    """.cleanLines
+    val originalTracks = loadCSVFromLineSeq(trackLines, delimiter = "\t", header = false).cache()
+    val tracks = Processing.prepareData(originalTracks)
+
+    When("compute the reproductions per artist")
+    val reproductions = Processing.computeReproductionPerArtist(tracks)
+
+    Then("then sessions must be the expected")
+    reproductions.show()
+    reproductions.count shouldBe 3
+    reproductions.collect.map(r => (r.getString(0), r.getLong(1))).sorted.toSeq shouldBe
+      Seq(("id1", 3), ("id2", 3), ("id3", 3))
+
+
+  }
 
 }
 

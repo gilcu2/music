@@ -13,6 +13,11 @@ object Processing {
     computeTopSongs(longestSessions, nSongs)
   }
 
+  def computeReproductionPerArtist(tracks: DataFrame): DataFrame = {
+    //    val tracks = prepareData(logs)
+    tracks.groupBy(artistIdField).count()
+  }
+
   val userIdField = "userId"
   val timeField = "timeStamp"
   val artistIdField = "artistId"
