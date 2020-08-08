@@ -147,7 +147,6 @@ class ProcessingTest extends FlatSpec with Matchers with GivenWhenThen with Spar
     val reproductions = Processing.computeReproductionPerArtist(tracks)
 
     Then("then sessions must be the expected")
-    reproductions.show()
     reproductions.count shouldBe 3
     reproductions.collect.map(r => (r.getString(0), r.getLong(1))).sorted.toSeq shouldBe
       Seq(("id1", 3), ("id2", 3), ("id3", 3))
