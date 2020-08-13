@@ -71,7 +71,6 @@ object Processing {
       sessions
     })
 
-
   def computeSessions(tracks: DataFrame): DataFrame =
     tracks
       .groupBy(userIdField)

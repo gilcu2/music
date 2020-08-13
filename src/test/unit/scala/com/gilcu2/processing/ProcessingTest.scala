@@ -178,5 +178,4 @@ object DataSample {
       |user_000001	2009-05-03T15:37:56Z	ba2f4f3b-0293-4bc8-bb94-2f73b5207343	Underworld	  	Crocodile (Innervisions Orchestra Mix)
       |""".cleanLines
 
-
 }

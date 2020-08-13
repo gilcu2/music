@@ -23,7 +23,7 @@ object MusicMain extends MainTrait {
       tracks.limit(arguments.limitRows)
     } else tracks
 
-    val results = Processing.computeTopSongFromLongestSessions(tracks, arguments.numberOfBiggestSessions, arguments.topNumberOfSongs)
+    val results = Processing.computeTopSongFromLongestSessions(trackLimited, arguments.numberOfBiggestSessions, arguments.topNumberOfSongs)
 
     Spark.saveToCSVFile(results, config.topSongPath, delimiter = "\t", ext = ".tsv", oneFile = true)
 
